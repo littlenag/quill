@@ -8,26 +8,12 @@ class SqlActionMacroSpec extends Spec {
   "runs actions" - {
     import testContext._
     "without bindings" - {
-      "update" in {
-        val q = quote {
-          qr1.filter(t => t.s == null).update(_.s -> "s")
-        }
-        testContext.run(q).string mustEqual
-          "UPDATE TestEntity SET s = 's' WHERE s IS NULL"
-      }
       "insert" in {
         val q = quote {
           qr1.insert(_.s -> "s")
         }
         testContext.run(q).string mustEqual
           "INSERT INTO TestEntity (s) VALUES ('s')"
-      }
-      "delete" in {
-        val q = quote {
-          qr1.filter(t => t.s == null).delete
-        }
-        testContext.run(q).string mustEqual
-          "DELETE FROM TestEntity WHERE s IS NULL"
       }
     }
     "with bindings" - {

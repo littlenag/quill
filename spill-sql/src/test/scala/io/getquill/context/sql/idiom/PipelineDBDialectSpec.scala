@@ -1,11 +1,12 @@
 package io.getquill.context.sql.idiom
 
+import io.getquill.Spec
 import io.getquill.PipelineDBDialect
 import io.getquill.SqlMirrorContext
 import io.getquill.Literal
 import io.getquill.TestEntities
 
-class PipelineDBDialectSpec extends OnConflictSpec {
+class PipelineDBDialectSpec extends Spec {
 
   val ctx = new SqlMirrorContext(PipelineDBDialect, Literal) with TestEntities
   import ctx._
@@ -42,25 +43,5 @@ class PipelineDBDialectSpec extends OnConflictSpec {
 
     prepareForProbing("INSERT INTO tb (x1,x2,x3) VALUES (?,?,?)") mustEqual
       s"PREPARE p${id + 2} AS INSERT INTO tb (x1,x2,x3) VALUES ($$1,$$2,$$3)"
-  }
-
-  "OnConflict" - {
-    "no target - ignore" in {
-      ctx.run(`no target - ignore`).string mustEqual
-        "INSERT INTO TestEntity AS t (s,i,l,o) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING"
-    }
-    "cols target - ignore" in {
-      ctx.run(`cols target - ignore`).string mustEqual
-        "INSERT INTO TestEntity (s,i,l,o) VALUES (?, ?, ?, ?) ON CONFLICT (i) DO NOTHING"
-    }
-    "no target - update" in {
-      intercept[IllegalStateException] {
-        ctx.run(`no target - update`.dynamic)
-      }
-    }
-    "cols target - update" in {
-      ctx.run(`cols target - update`).string mustEqual
-        "INSERT INTO TestEntity AS t (s,i,l,o) VALUES (?, ?, ?, ?) ON CONFLICT (i,s) DO UPDATE SET l = ((t.l + EXCLUDED.l) / 2), s = EXCLUDED.s"
-    }
   }
 }

@@ -54,20 +54,6 @@ class RenamePropertiesSpec extends Spec {
         testContext.run(q).string mustEqual
           "INSERT INTO test_entity (field_i,l,o,field_s) VALUES (?, ?, ?, ?)"
       }
-      "update" in {
-        val q = quote {
-          e.filter(_.i == 999).update(lift(TestEntity("a", 1, 1L, None)))
-        }
-        testContext.run(q).string mustEqual
-          "UPDATE test_entity SET field_s = ?, field_i = ?, l = ?, o = ? WHERE field_i = 999"
-      }
-      "delete" in {
-        val q = quote {
-          e.filter(_.i == 999).delete
-        }
-        testContext.run(q).string mustEqual
-          "DELETE FROM test_entity WHERE field_i = 999"
-      }
       "returning" - {
         "alias" in {
           val q = quote {
@@ -340,26 +326,6 @@ class RenamePropertiesSpec extends Spec {
         }
         testContext.run(q).string mustEqual
           "SELECT x.bC1, x.bC2 FROM A x"
-      }
-    }
-    "update" - {
-      "without schema" in {
-        case class B(c: Int) extends Embedded
-        case class A(b: B)
-        val q = quote {
-          query[A].update(_.b.c -> 1)
-        }
-        testContext.run(q).string mustEqual
-          "UPDATE A SET c = 1"
-      }
-      "with schema" in {
-        case class B(c: Int) extends Embedded
-        case class A(b: B)
-        val q = quote {
-          querySchema[A]("A", _.b.c -> "bC").update(_.b.c -> 1)
-        }
-        testContext.run(q).string mustEqual
-          "UPDATE A SET bC = 1"
       }
     }
     "insert" - {

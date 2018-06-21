@@ -37,10 +37,6 @@ trait EncodingSpec extends Spec {
     o11: Option[Date]
   )
 
-  val delete = quote {
-    query[EncodingTestEntity].delete
-  }
-
   val insert = quote {
     (v1: String,
     v2: BigDecimal,

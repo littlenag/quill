@@ -415,13 +415,6 @@ class MirrorIdiomSpec extends Spec {
   }
 
   "shows actions" - {
-    "update" in {
-      val q = quote {
-        query[TestEntity].filter(t => t.s == "test").update(t => t.s -> "a")
-      }
-      stmt"${(q.ast: Ast).token}" mustEqual
-        stmt"""querySchema("TestEntity").filter(t => t.s == "test").update(t => t.s -> "a")"""
-    }
     "insert" - {
       "normal" in {
         val q = quote {
@@ -437,37 +430,6 @@ class MirrorIdiomSpec extends Spec {
         }
         stmt"${(q.ast: Ast).token}" mustEqual
           stmt"""querySchema("TestEntity").insert(t => t.s -> "a").returning((t) => t.l)"""
-      }
-    }
-
-    "delete" in {
-      val q = quote {
-        query[TestEntity].delete
-      }
-      stmt"${(q.ast: Ast).token}" mustEqual
-        stmt"""querySchema("TestEntity").delete"""
-    }
-
-    "onConflict" - {
-      val i = quote {
-        query[TestEntity].insert(t => t.s -> "a")
-      }
-      val t = stmt"""querySchema("TestEntity").insert(t => t.s -> "a")"""
-      "onConflictIgnore" in {
-        stmt"${(i.onConflictIgnore.ast: Ast).token}" mustEqual
-          stmt"$t.onConflictIgnore"
-      }
-      "onConflictIgnore(targets*)" in {
-        stmt"${(i.onConflictIgnore(_.i, _.s).ast: Ast).token}" mustEqual
-          stmt"$t.onConflictIgnore(_.i, _.s)"
-      }
-      "onConflictUpdate(assigns*)" in {
-        stmt"${(i.onConflictUpdate((t, e) => t.s -> e.s, (t, e) => t.i -> (t.i + 1)).ast: Ast).token}" mustEqual
-          stmt"$t.onConflictUpdate((t, e) => t.s -> e.s, (t, e) => t.i -> (t.i + 1))"
-      }
-      "onConflictUpdate(targets*)(assigns*)" in {
-        stmt"${(i.onConflictUpdate(_.i)((t, e) => t.s -> e.s).ast: Ast).token}" mustEqual
-          stmt"$t.onConflictUpdate(_.i)((t, e) => t.s -> e.s)"
       }
     }
   }

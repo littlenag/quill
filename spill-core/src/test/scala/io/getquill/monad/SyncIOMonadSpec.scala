@@ -18,10 +18,6 @@ class SyncIOMonadSpec extends IOMonadSpec {
     "RunQueryResult" in {
       eval(ctx.runIO(qr1)).string mustEqual ctx.run(qr1).string
     }
-    "RunActionResult" in {
-      val q = quote(qr1.delete)
-      eval(ctx.runIO(q)).string mustEqual ctx.run(q).string
-    }
     "RunActionReturningResult" in {
       val t = TestEntity("1", 2, 3L, Some(4))
       val q = quote(qr1.insert(lift(t)).returning(_.i))

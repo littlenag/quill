@@ -44,10 +44,6 @@ trait EncodingSpec extends Spec {
     o14: Option[UUID]
   )
 
-  val delete = quote {
-    query[EncodingTestEntity].delete
-  }
-
   val insert = quote {
     (e: EncodingTestEntity) => query[EncodingTestEntity].insert(e)
   }

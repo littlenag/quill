@@ -4,7 +4,6 @@ trait QueryResultTypeSpec extends ProductSpec {
 
   import context._
 
-  val deleteAll = quote(query[Product].delete)
   val selectAll = quote(query[Product])
   val map = quote(query[Product].map(_.id))
   val filter = quote(query[Product].filter(_ => true))

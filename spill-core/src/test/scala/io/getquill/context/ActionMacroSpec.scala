@@ -8,14 +8,6 @@ import io.getquill.context.mirror.Row
 class ActionMacroSpec extends Spec {
 
   "runs non-batched action" - {
-    "normal" in {
-      val q = quote {
-        qr1.delete
-      }
-      val r = testContext.run(q)
-      r.string mustEqual """querySchema("TestEntity").delete"""
-      r.prepareRow mustEqual Row()
-    }
     "scalar lifting" in {
       val q = quote {
         qr1.insert(t => t.i -> lift(1))
@@ -109,32 +101,6 @@ class ActionMacroSpec extends Spec {
       r.groups mustEqual List(
         """querySchema("TestEntity").insert(v => v.s -> ?, v => v.i -> ?, v => v.l -> ?, v => v.o -> ?)""" ->
           List(Row("s1", 2, 3L, Some(4)), Row("s5", 6, 7L, Some(8)))
-      )
-    }
-    "tuple + case class + nested action" in {
-      val nested = quote {
-        (s: String, p: TestEntity) => qr1.filter(t => t.s == s).update(p)
-      }
-      val q = quote {
-        liftQuery(entities).foreach(p => nested(lift("s"), p))
-      }
-      val r = testContext.run(q)
-      r.groups mustEqual List(
-        """querySchema("TestEntity").filter(t => t.s == ?).update(v => v.s -> ?, v => v.i -> ?, v => v.l -> ?, v => v.o -> ?)""" ->
-          List(Row("s", "s1", 2, 3L, Some(4)), Row("s", "s5", 6, 7L, Some(8)))
-      )
-    }
-    "zipWithIndex" in {
-      val nested = quote {
-        (e: TestEntity, i: Int) => qr1.filter(t => t.i == i).update(e)
-      }
-      val q = quote {
-        liftQuery(entities.zipWithIndex).foreach(p => nested(p._1, p._2))
-      }
-      val r = testContext.run(q)
-      r.groups mustEqual List(
-        """querySchema("TestEntity").filter(t => t.i == ?).update(v => v.s -> ?, v => v.i -> ?, v => v.l -> ?, v => v.o -> ?)""" ->
-          List(Row(0, "s1", 2, 3, Some(4)), Row(1, "s5", 6, 7, Some(8)))
       )
     }
     "scalar + returning" in {

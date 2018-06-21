@@ -33,10 +33,6 @@ case class AddressId(value: Long) extends AnyVal {
   def `inside run - insert` = run {
     query[Address].insert(_.id -> lift(this))
   }
-
-  def `inside run - update` = run {
-    query[Address].update(_.id -> lift(this))
-  }
 }
 
 class EncodingDslSpec extends Spec {

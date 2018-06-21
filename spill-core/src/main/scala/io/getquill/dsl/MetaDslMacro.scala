@@ -35,9 +35,6 @@ class MetaDslMacro(val c: MacroContext) {
   def insertMeta[T](exclude: Tree*)(implicit t: WeakTypeTag[T]): Tree =
     actionMeta[T](value("Encoder", t.tpe, exclude: _*), "insert")
 
-  def updateMeta[T](exclude: Tree*)(implicit t: WeakTypeTag[T]): Tree =
-    actionMeta[T](value("Encoder", t.tpe, exclude: _*), "update")
-
   def materializeQueryMeta[T](implicit t: WeakTypeTag[T]): Tree = {
     val value = this.value("Decoder", t.tpe)
     q"""
@@ -48,9 +45,6 @@ class MetaDslMacro(val c: MacroContext) {
       }
     """
   }
-
-  def materializeUpdateMeta[T](implicit t: WeakTypeTag[T]): Tree =
-    actionMeta[T](value("Encoder", t.tpe), "update")
 
   def materializeInsertMeta[T](implicit t: WeakTypeTag[T]): Tree =
     actionMeta[T](value("Encoder", t.tpe), "insert")

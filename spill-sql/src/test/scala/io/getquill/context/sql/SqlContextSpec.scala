@@ -15,14 +15,6 @@ import io.getquill.context.sql.idiom.ConcatSupport
 class SqlContextSpec extends Spec {
 
   "binds inputs according to the sql terms order" - {
-    "filter.update" in {
-      val q = quote {
-        qr1.filter(t => t.i == lift(1)).update(t => t.l -> lift(2L))
-      }
-      val mirror = testContext.run(q)
-      mirror.string mustEqual "UPDATE TestEntity SET l = ? WHERE i = ?"
-      mirror.prepareRow mustEqual Row(2l, 1)
-    }
     "filter.map" in {
       val q = quote {
         qr1.filter(t => t.i == lift(1)).map(t => lift(2L))

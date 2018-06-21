@@ -82,14 +82,6 @@ class SqlIdiomNamingSpec extends Spec {
         db.run(query[SomeEntity].insert(lift(SomeEntity(1)))).string mustEqual
           "INSERT INTO some_entity (some_column) VALUES (?)"
       }
-      "update" in {
-        db.run(query[SomeEntity].update(lift(SomeEntity(1)))).string mustEqual
-          "UPDATE some_entity SET some_column = ?"
-      }
-      "delete" in {
-        db.run(query[SomeEntity].delete).string mustEqual
-          "DELETE FROM some_entity"
-      }
     }
     "queries" - {
       "property empty check" in {

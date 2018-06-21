@@ -287,47 +287,6 @@ class QuotationSpec extends Spec {
       }
     }
     "action" - {
-      "update" - {
-        "field" in {
-          val q = quote {
-            qr1.update(t => t.s -> "s")
-          }
-          quote(unquote(q)).ast mustEqual Update(Entity("TestEntity", Nil), List(Assignment(Ident("t"), Property(Ident("t"), "s"), Constant("s"))))
-        }
-        "set field using another field" in {
-          val q = quote {
-            qr1.update(t => t.i -> (t.i + 1))
-          }
-          quote(unquote(q)).ast mustEqual Update(Entity("TestEntity", Nil), List(Assignment(Ident("t"), Property(Ident("t"), "i"), BinaryOperation(Property(Ident("t"), "i"), NumericOperator.`+`, Constant(1)))))
-        }
-        "case class" in {
-          val q = quote {
-            (t: TestEntity) => qr1.update(t)
-          }
-          val n = quote {
-            (t: TestEntity) =>
-              qr1.update(
-                v => v.s -> t.s,
-                v => v.i -> t.i,
-                v => v.l -> t.l,
-                v => v.o -> t.o
-              )
-          }
-          quote(unquote(q)).ast mustEqual n.ast
-        }
-        "explicit `Predef.ArrowAssoc`" in {
-          val q = quote {
-            qr1.update(t => Predef.ArrowAssoc(t.s).->[String]("s"))
-          }
-          quote(unquote(q)).ast mustEqual Update(Entity("TestEntity", Nil), List(Assignment(Ident("t"), Property(Ident("t"), "s"), Constant("s"))))
-        }
-        "unicode arrow must compile" in {
-          """|quote {
-             |  qr1.filter(t => t.i == 1).update(_.s → "new", _.i → 0)
-             |}
-          """.stripMargin must compile
-        }
-      }
       "insert" - {
         "field" in {
           val q = quote {
@@ -350,15 +309,6 @@ class QuotationSpec extends Spec {
           }
           quote(unquote(q)).ast mustEqual n.ast
         }
-        "batch" in {
-          val list = List(1, 2)
-          val delete = quote((i: Int) => qr1.filter(_.i == i).delete)
-          val q = quote {
-            liftQuery(list).foreach(i => delete(i))
-          }
-          quote(unquote(q)).ast mustEqual
-            Foreach(ScalarQueryLift("q.list", list, intEncoder), Ident("i"), delete.ast.body)
-        }
         "batch with Quoted[Action[T]]" in {
           case class TestEntity(id: Int)
           val list = List(
@@ -376,12 +326,6 @@ class QuotationSpec extends Spec {
              |}
           """.stripMargin must compile
         }
-      }
-      "delete" in {
-        val q = quote {
-          qr1.delete
-        }
-        quote(unquote(q)).ast mustEqual Delete(Entity("TestEntity", Nil))
       }
       "fails if the assignment types don't match" in {
         """
@@ -1129,27 +1073,6 @@ class QuotationSpec extends Spec {
         "action" in {
           val q = quote {
             query[TestEntity].insert(lift(t))
-          }
-          val l1 = q.liftings.`t.s`
-          l1.value mustEqual t.s
-          l1.encoder mustEqual stringEncoder
-
-          val l2 = q.liftings.`t.i`
-          l2.value mustEqual t.i
-          l2.encoder mustEqual intEncoder
-
-          val l3 = q.liftings.`t.l`
-          l3.value mustEqual t.l
-          l3.encoder mustEqual longEncoder
-
-          q.liftings.`t.o`.value mustEqual t.o
-        }
-        "action + beta reduction" in {
-          val n = quote {
-            (t: TestEntity) => query[TestEntity].update(t)
-          }
-          val q = quote {
-            n(lift(t))
           }
           val l1 = q.liftings.`t.s`
           l1.value mustEqual t.s
