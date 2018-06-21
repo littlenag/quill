@@ -1883,7 +1883,7 @@ The configurations are set using runtime reflection on the [`Cluster.builder`](h
 
 #### application.properties
 ```
-ctx.keyspace=quill_test
+ctx.keyspace=spill_test
 ctx.preparedStatementCacheSize=1000
 ctx.session.contactPoint=127.0.0.1
 ctx.session.withPort=9042

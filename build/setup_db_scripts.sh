@@ -17,7 +17,7 @@ function get_host() {
 # usage: setup_x <script>
 
 function setup_sqlite() {
-    DB_FILE=quill-jdbc/quill_test.db
+    DB_FILE=quill-jdbc/spill_test.db
     rm -f $DB_FILE
     sqlite3 $DB_FILE < $1
     chmod a+rw $DB_FILE
@@ -38,8 +38,8 @@ function setup_mysql() {
     echo "Connected to MySql"
 
     eval $hacks
-    mysql -h $2 -u root -e "CREATE DATABASE quill_test;"
-    mysql -h $2 -u root quill_test < $1
+    mysql -h $2 -u root -e "CREATE DATABASE spill_test;"
+    mysql -h $2 -u root spill_test < $1
     mysql -h $2 -u root -e "CREATE USER 'finagle'@'%' IDENTIFIED BY 'finagle';"
     mysql -h $2 -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'finagle'@'%';"
     mysql -h $2 -u root -e "FLUSH PRIVILEGES;"
@@ -53,8 +53,8 @@ function setup_postgres() {
     done
     echo "Connected to Postgres"
 
-    psql -h $2 -U postgres -c "CREATE DATABASE quill_test"
-    psql -h $2 -U postgres -d quill_test -a -q -f $1
+    psql -h $2 -U postgres -c "CREATE DATABASE spill_test"
+    psql -h $2 -U postgres -d spill_test -a -q -f $1
 }
 
 function setup_cassandra() {
@@ -76,8 +76,8 @@ function setup_sqlserver() {
     done
     echo "Connected to SqlServer"
 
-    /opt/mssql-tools/bin/sqlcmd -S $2 -U SA -P "QuillRocks!" -Q "CREATE DATABASE quill_test"
-    /opt/mssql-tools/bin/sqlcmd -S $2 -U SA -P "QuillRocks!" -d quill_test -i $1
+    /opt/mssql-tools/bin/sqlcmd -S $2 -U SA -P "QuillRocks!" -Q "CREATE DATABASE spill_test"
+    /opt/mssql-tools/bin/sqlcmd -S $2 -U SA -P "QuillRocks!" -d spill_test -i $1
 }
 
 export -f setup_sqlite
