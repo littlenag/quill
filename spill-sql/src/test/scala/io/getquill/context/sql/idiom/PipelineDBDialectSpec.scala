@@ -1,13 +1,13 @@
 package io.getquill.context.sql.idiom
 
-import io.getquill.PostgresDialect
+import io.getquill.PipelineDBDialect
 import io.getquill.SqlMirrorContext
 import io.getquill.Literal
 import io.getquill.TestEntities
 
-class PostgresDialectSpec extends OnConflictSpec {
+class PipelineDBDialectSpec extends OnConflictSpec {
 
-  val ctx = new SqlMirrorContext(PostgresDialect, Literal) with TestEntities
+  val ctx = new SqlMirrorContext(PipelineDBDialect, Literal) with TestEntities
   import ctx._
 
   "applies explicit casts" - {
@@ -34,7 +34,7 @@ class PostgresDialectSpec extends OnConflictSpec {
   }
 
   "prepareForProbing" in {
-    import PostgresDialect._
+    import PipelineDBDialect._
     val id = preparedStatementId.get()
 
     prepareForProbing("SELECT t.x1, t.x2 FROM tb t WHERE (t.x1 = ?) AND (t.x2 = ?)") mustEqual

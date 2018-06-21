@@ -8,7 +8,7 @@ import io.getquill.idiom.StatementInterpolator._
 import io.getquill.idiom.Token
 import io.getquill.util.Messages.fail
 
-trait PostgresDialect
+trait PipelineDBDialect
   extends SqlIdiom
   with QuestionMarkBindVariables
   with ConcatSupport {
@@ -27,7 +27,7 @@ trait PostgresDialect
     }
 
     val customAstTokenizer =
-      Tokenizer.withFallback[Ast](PostgresDialect.this.astTokenizer(_, strategy)) {
+      Tokenizer.withFallback[Ast](PipelineDBDialect.this.astTokenizer(_, strategy)) {
         case _: OnConflict.Excluded => stmt"EXCLUDED"
         case OnConflict.Existing(a) => stmt"${a.token}"
         case a: Action              => super.actionTokenizer(customEntityTokenizer)(actionAstTokenizer, strategy).token(a)
@@ -81,4 +81,4 @@ trait PostgresDialect
   }
 }
 
-object PostgresDialect extends PostgresDialect
+object PipelineDBDialect extends PipelineDBDialect

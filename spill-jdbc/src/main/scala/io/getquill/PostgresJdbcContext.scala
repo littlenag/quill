@@ -9,7 +9,7 @@ import io.getquill.context.jdbc.{ ArrayDecoders, ArrayEncoders, JdbcContext, UUI
 import io.getquill.util.LoadConfig
 
 class PostgresJdbcContext[N <: NamingStrategy](val naming: N, dataSource: DataSource with Closeable)
-  extends JdbcContext[PostgresDialect, N](dataSource)
+  extends JdbcContext[PipelineDBDialect, N](dataSource)
   with UUIDObjectEncoding
   with ArrayDecoders
   with ArrayEncoders {
@@ -18,7 +18,7 @@ class PostgresJdbcContext[N <: NamingStrategy](val naming: N, dataSource: DataSo
   def this(naming: N, config: Config) = this(naming, JdbcContextConfig(config))
   def this(naming: N, configPrefix: String) = this(naming, LoadConfig(configPrefix))
 
-  val idiom = PostgresDialect
+  val idiom = PipelineDBDialect
 
   override def parseJdbcType(intType: Int): String = intType match {
     case Types.TINYINT => super.parseJdbcType(Types.SMALLINT)
