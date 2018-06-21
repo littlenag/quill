@@ -9,8 +9,7 @@ enablePlugins(TutPlugin)
 lazy val sparkIncludeProp = Option(System.getProperty("spark.include"))
 
 lazy val modules = Seq[sbt.ClasspathDep[sbt.ProjectReference]](
-  `spill-core-jvm`, `spill-core-js`, `spill-sql-jvm`, `spill-sql-js`,
-  `spill-jdbc`, `spill-async`, `spill-async-postgres`
+  `spill-core-jvm`, `spill-sql-jvm`, `spill-jdbc`, `spill-async`, `spill-async-postgres`
 )
 
 lazy val `spill` =
@@ -40,25 +39,25 @@ lazy val `spill-core` =
       "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2",
       "org.scala-lang"             %  "scala-reflect" % scalaVersion.value
     ))
-    .jsSettings(
-      libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.2",
-      coverageExcludedPackages := ".*"
-    )
+    //.jsSettings(
+    //  libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.2",
+    //  coverageExcludedPackages := ".*"
+    //)
 
 lazy val `spill-core-jvm` = `spill-core`.jvm
-lazy val `spill-core-js` = `spill-core`.js
+//lazy val `spill-core-js` = `spill-core`.js
 
 lazy val `spill-sql` =
   crossProject.crossType(superPure)
     .settings(commonSettings: _*)
     .settings(mimaSettings: _*)
-    .jsSettings(
-      coverageExcludedPackages := ".*"
-    )
+    //.jsSettings(
+    //  coverageExcludedPackages := ".*"
+    //)
     .dependsOn(`spill-core` % "compile->compile;test->test")
 
 lazy val `spill-sql-jvm` = `spill-sql`.jvm
-lazy val `spill-sql-js` = `spill-sql`.js
+//lazy val `spill-sql-js` = `spill-sql`.js
 
 lazy val `spill-jdbc` =
   (project in file("spill-jdbc"))
@@ -154,7 +153,7 @@ def updateReadmeVersion(selectVersion: sbtrelease.Versions => String) =
     import scala.io.Source
     import java.io.PrintWriter
 
-    val pattern = """"io.getspill" %% "spill-.*" % "(.*)"""".r
+    val pattern = """"io.getquill" %% "spill-.*" % "(.*)"""".r
 
     val fileName = "README.md"
     val content = Source.fromFile(fileName).getLines.mkString("\n")
@@ -181,7 +180,7 @@ def updateWebsiteTag =
   })
 
 lazy val commonSettings = ReleasePlugin.extraReleaseCommands ++ Seq(
-  organization := "io.getspill",
+  organization := "io.getquill",
   scalaVersion := "2.11.12",
   crossScalaVersions := Seq("2.11.12","2.12.6"),
   libraryDependencies ++= Seq(
