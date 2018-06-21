@@ -9,14 +9,11 @@ enablePlugins(TutPlugin)
 lazy val sparkIncludeProp = Option(System.getProperty("spark.include"))
 
 lazy val modules = Seq[sbt.ClasspathDep[sbt.ProjectReference]](
-  `quill-core-jvm`, `quill-core-js`, `quill-sql-jvm`, `quill-sql-js`,
-  `quill-jdbc`, `quill-finagle-mysql`, `quill-finagle-postgres`, `quill-async`,
-  `quill-async-mysql`, `quill-async-postgres`, `quill-cassandra`, `quill-orientdb`
-) ++ 
-  Seq[sbt.ClasspathDep[sbt.ProjectReference]](`quill-spark`)
-    .filter(_ => sparkIncludeProp.contains("true"))
+  `spill-core-jvm`, `spill-core-js`, `spill-sql-jvm`, `spill-sql-js`,
+  `spill-jdbc`, `spill-async`, `spill-async-postgres`
+)
 
-lazy val `quill` =
+lazy val `spill` =
   (project in file("."))
     .settings(commonSettings)
     .settings(`tut-settings`:_*)
@@ -34,7 +31,7 @@ lazy val superPure = new org.scalajs.sbtplugin.cross.CrossType {
     Some(projectBase.getParentFile / "src" / conf / "scala")
 }
 
-lazy val `quill-core` =
+lazy val `spill-core` =
   crossProject.crossType(superPure)
     .settings(commonSettings: _*)
     .settings(mimaSettings: _*)
@@ -48,23 +45,23 @@ lazy val `quill-core` =
       coverageExcludedPackages := ".*"
     )
 
-lazy val `quill-core-jvm` = `quill-core`.jvm
-lazy val `quill-core-js` = `quill-core`.js
+lazy val `spill-core-jvm` = `spill-core`.jvm
+lazy val `spill-core-js` = `spill-core`.js
 
-lazy val `quill-sql` =
+lazy val `spill-sql` =
   crossProject.crossType(superPure)
     .settings(commonSettings: _*)
     .settings(mimaSettings: _*)
     .jsSettings(
       coverageExcludedPackages := ".*"
     )
-    .dependsOn(`quill-core` % "compile->compile;test->test")
+    .dependsOn(`spill-core` % "compile->compile;test->test")
 
-lazy val `quill-sql-jvm` = `quill-sql`.jvm
-lazy val `quill-sql-js` = `quill-sql`.js
+lazy val `spill-sql-jvm` = `spill-sql`.jvm
+lazy val `spill-sql-js` = `spill-sql`.js
 
-lazy val `quill-jdbc` =
-  (project in file("quill-jdbc"))
+lazy val `spill-jdbc` =
+  (project in file("spill-jdbc"))
     .settings(commonSettings: _*)
     .settings(mimaSettings: _*)
     .settings(
@@ -78,47 +75,10 @@ lazy val `quill-jdbc` =
         "com.microsoft.sqlserver" % "mssql-jdbc"           % "6.1.7.jre8-preview" % Test
       )
     )
-    .dependsOn(`quill-sql-jvm` % "compile->compile;test->test")
+    .dependsOn(`spill-sql-jvm` % "compile->compile;test->test")
 
-lazy val `quill-spark` =
-  (project in file("quill-spark"))
-    .settings(commonSettings: _*)
-    .settings(mimaSettings: _*)
-    .settings(
-      crossScalaVersions := Seq("2.11.12"),
-      fork in Test := true,
-      libraryDependencies ++= Seq(
-        "org.apache.spark" %% "spark-sql" % "2.2.0"
-      )
-    )
-    .dependsOn(`quill-sql-jvm` % "compile->compile;test->test")
-
-lazy val `quill-finagle-mysql` =
-  (project in file("quill-finagle-mysql"))
-    .settings(commonSettings: _*)
-    .settings(mimaSettings: _*)
-    .settings(
-      fork in Test := true,
-      libraryDependencies ++= Seq(
-        "com.twitter" %% "finagle-mysql" % "18.5.0"
-      )
-    )
-    .dependsOn(`quill-sql-jvm` % "compile->compile;test->test")
-
-lazy val `quill-finagle-postgres` =
-  (project in file("quill-finagle-postgres"))
-    .settings(commonSettings: _*)
-    .settings(mimaSettings: _*)
-    .settings(
-      fork in Test := true,
-      libraryDependencies ++= Seq(
-        "io.github.finagle" %% "finagle-postgres" % "0.7.0"
-      )
-    )
-    .dependsOn(`quill-sql-jvm` % "compile->compile;test->test")
-
-lazy val `quill-async` =
-  (project in file("quill-async"))
+lazy val `spill-async` =
+  (project in file("spill-async"))
     .settings(commonSettings: _*)
     .settings(mimaSettings: _*)
     .settings(
@@ -127,22 +87,10 @@ lazy val `quill-async` =
         "com.github.mauricio" %% "db-async-common"  % "0.2.21"
       )
     )
-    .dependsOn(`quill-sql-jvm` % "compile->compile;test->test")
+    .dependsOn(`spill-sql-jvm` % "compile->compile;test->test")
 
-lazy val `quill-async-mysql` =
-  (project in file("quill-async-mysql"))
-    .settings(commonSettings: _*)
-    .settings(mimaSettings: _*)
-    .settings(
-      fork in Test := true,
-      libraryDependencies ++= Seq(
-        "com.github.mauricio" %% "mysql-async"      % "0.2.21"
-      )
-    )
-    .dependsOn(`quill-async` % "compile->compile;test->test")
-
-lazy val `quill-async-postgres` =
-  (project in file("quill-async-postgres"))
+lazy val `spill-async-postgres` =
+  (project in file("spill-async-postgres"))
     .settings(commonSettings: _*)
     .settings(mimaSettings: _*)
     .settings(
@@ -151,35 +99,15 @@ lazy val `quill-async-postgres` =
         "com.github.mauricio" %% "postgresql-async" % "0.2.21"
       )
     )
-    .dependsOn(`quill-async` % "compile->compile;test->test")
-
-lazy val `quill-cassandra` =
-  (project in file("quill-cassandra"))
-    .settings(commonSettings: _*)
-    .settings(mimaSettings: _*)
-    .settings(
-      fork in Test := true,
-      libraryDependencies ++= Seq(
-        "com.datastax.cassandra" %  "cassandra-driver-core" % "3.4.0",
-        "io.monix"               %% "monix"                 % "2.3.3"
-      )
-    )
-    .dependsOn(`quill-core-jvm` % "compile->compile;test->test")
-
-lazy val `quill-orientdb` =
-  (project in file("quill-orientdb"))
-      .settings(commonSettings: _*)
-      .settings(mimaSettings: _*)
-      .settings(
-        fork in Test := true,
-        libraryDependencies ++= Seq(
-          "com.orientechnologies" % "orientdb-graphdb" % "2.2.30"
-        )
-      )
-      .dependsOn(`quill-sql-jvm` % "compile->compile;test->test")
+    .dependsOn(`spill-async` % "compile->compile;test->test")
 
 lazy val `tut-sources` = Seq(
-  "CASSANDRA.md",
+  // flink
+  // pipelinedb
+  // akka streams
+  // fs2
+  // esper
+  // kafka
   "README.md"
 )
 
@@ -226,7 +154,7 @@ def updateReadmeVersion(selectVersion: sbtrelease.Versions => String) =
     import scala.io.Source
     import java.io.PrintWriter
 
-    val pattern = """"io.getquill" %% "quill-.*" % "(.*)"""".r
+    val pattern = """"io.getspill" %% "spill-.*" % "(.*)"""".r
 
     val fileName = "README.md"
     val content = Source.fromFile(fileName).getLines.mkString("\n")
@@ -253,7 +181,7 @@ def updateWebsiteTag =
   })
 
 lazy val commonSettings = ReleasePlugin.extraReleaseCommands ++ Seq(
-  organization := "io.getquill",
+  organization := "io.getspill",
   scalaVersion := "2.11.12",
   crossScalaVersions := Seq("2.11.12","2.12.6"),
   libraryDependencies ++= Seq(
@@ -355,17 +283,17 @@ lazy val commonSettings = ReleasePlugin.extraReleaseCommands ++ Seq(
     }
   },
   pomExtra := (
-    <url>http://github.com/getquill/quill</url>
+    <url>http://github.com/getspill/spill</url>
     <licenses>
       <license>
         <name>Apache License 2.0</name>
-        <url>https://raw.githubusercontent.com/getquill/quill/master/LICENSE.txt</url>
+        <url>https://raw.githubusercontent.com/getspill/spill/master/LICENSE.txt</url>
         <distribution>repo</distribution>
       </license>
     </licenses>
     <scm>
-      <url>git@github.com:getquill/quill.git</url>
-      <connection>scm:git:git@github.com:getquill/quill.git</connection>
+      <url>git@github.com:getspill/spill.git</url>
+      <connection>scm:git:git@github.com:getspill/spill.git</connection>
     </scm>
     <developers>
       <developer>
