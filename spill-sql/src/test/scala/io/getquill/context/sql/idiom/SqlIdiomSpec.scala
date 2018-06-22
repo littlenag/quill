@@ -852,13 +852,6 @@ class SqlIdiomSpec extends Spec {
             "SELECT 12 FROM TestEntity t"
         }
       }
-      "null" in {
-        val q = quote {
-          qr1.update(_.s -> null)
-        }
-        testContext.run(q).string mustEqual
-          "UPDATE TestEntity SET s = null"
-      }
       "tuple" in {
         val q = quote {
           qr1.map(t => (1, 2))
