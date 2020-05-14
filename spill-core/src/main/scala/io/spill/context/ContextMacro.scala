@@ -1,7 +1,7 @@
 package io.spill.context
 
-import scala.reflect.macros.whitebox.{Context => MacroContext}
-import io.spill.ast.{Ast, Dynamic, Lift, Tag}
+import scala.reflect.macros.whitebox.{ Context => MacroContext }
+import io.spill.ast.{ Ast, Dynamic, Lift, Tag }
 import io.spill.quotation.Quotation
 import io.spill.util.LoadObject
 import io.spill.util.MacroContextExt._
@@ -14,7 +14,7 @@ import scala.util.Failure
 
 trait ContextMacro extends Quotation {
   val c: MacroContext
-  import c.universe.{Function => _, Ident => _, _}
+  import c.universe.{ Function => _, Ident => _, _ }
 
   protected def expand(ast: Ast): Tree =
     q"""

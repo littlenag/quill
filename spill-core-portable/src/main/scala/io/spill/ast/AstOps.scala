@@ -13,7 +13,7 @@ object +||+ {
   def unapply(a: Ast): Option[(Ast, Ast)] = {
     a match {
       case BinaryOperation(one, BooleanOperator.`||`, two) => Some((one, two))
-      case _                                               => None
+      case _ => None
     }
   }
 }
@@ -22,7 +22,7 @@ object +&&+ {
   def unapply(a: Ast): Option[(Ast, Ast)] = {
     a match {
       case BinaryOperation(one, BooleanOperator.`&&`, two) => Some((one, two))
-      case _                                               => None
+      case _ => None
     }
   }
 }
@@ -31,7 +31,7 @@ object +==+ {
   def unapply(a: Ast): Option[(Ast, Ast)] = {
     a match {
       case BinaryOperation(one, EqualityOperator.`==`, two) => Some((one, two))
-      case _                                                => None
+      case _ => None
     }
   }
 }
@@ -40,7 +40,7 @@ object +!=+ {
   def unapply(a: Ast): Option[(Ast, Ast)] = {
     a match {
       case BinaryOperation(one, EqualityOperator.`!=`, two) => Some((one, two))
-      case _                                                => None
+      case _ => None
     }
   }
 }
@@ -51,7 +51,7 @@ object IsNotNullCheck {
   def unapply(ast: Ast): Option[Ast] = {
     ast match {
       case BinaryOperation(cond, EqualityOperator.`!=`, NullValue) => Some(cond)
-      case _                                                       => None
+      case _ => None
     }
   }
 }
@@ -62,7 +62,7 @@ object IsNullCheck {
   def unapply(ast: Ast): Option[Ast] = {
     ast match {
       case BinaryOperation(cond, EqualityOperator.`==`, NullValue) => Some(cond)
-      case _                                                       => None
+      case _ => None
     }
   }
 }

@@ -4,7 +4,7 @@ import io.spill.ast._
 import io.spill.norm.BetaReduction
 
 case class Dealias(state: Option[Ident])
-    extends StatefulTransformer[Option[Ident]] {
+  extends StatefulTransformer[Option[Ident]] {
 
   override def apply(q: Query): (Query, StatefulTransformer[Option[Ident]]) =
     q match {

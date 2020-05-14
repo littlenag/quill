@@ -6,11 +6,13 @@ import io.spill.idiom.ReifyStatement
 import io.spill.NamingStrategy
 import io.spill.idiom.Idiom
 
-case class Expand[C <: Context[_, _]](val context: C,
-                                      val ast: Ast,
-                                      statement: Statement,
-                                      idiom: Idiom,
-                                      naming: NamingStrategy) {
+case class Expand[C <: Context[_, _]](
+  val context: C,
+  val ast:     Ast,
+  statement:   Statement,
+  idiom:       Idiom,
+  naming:      NamingStrategy
+) {
 
   val (string, externals) =
     ReifyStatement(

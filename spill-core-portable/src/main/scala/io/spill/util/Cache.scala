@@ -1,7 +1,7 @@
 package io.spill.util
 
 import java.io.Closeable
-import java.lang.System.{currentTimeMillis => now}
+import java.lang.System.{ currentTimeMillis => now }
 
 import scala.concurrent.duration.Duration
 

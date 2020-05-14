@@ -14,8 +14,10 @@ object AttachToEntity {
       }
   }
 
-  def apply(f: (Ast, Ident) => Query,
-            alias: Option[Ident] = None)(q: Ast): Ast =
+  def apply(
+    f:     (Ast, Ident) => Query,
+    alias: Option[Ident]         = None
+  )(q: Ast): Ast =
     q match {
 
       case Map(IsEntity(a), b, c)       => Map(f(a, b), b, c)
@@ -25,7 +27,7 @@ object AttachToEntity {
       case SortBy(IsEntity(a), b, c, d) => SortBy(f(a, b), b, c, d)
 
       case Map(_: GroupBy, _, _) | _: Union | _: UnionAll | _: Join |
-          _: FlatJoin =>
+        _: FlatJoin =>
         f(q, alias.getOrElse(Ident("x")))
 
       case Map(a: Query, b, c)       => Map(apply(f, Some(b))(a), b, c)
@@ -38,8 +40,8 @@ object AttachToEntity {
       case Aggregation(op, a: Query) => Aggregation(op, apply(f, alias)(a))
       case Distinct(a: Query)        => Distinct(apply(f, alias)(a))
 
-      case IsEntity(q) => f(q, alias.getOrElse(Ident("x")))
+      case IsEntity(q)               => f(q, alias.getOrElse(Ident("x")))
 
-      case other => fail(s"Can't find an 'Entity' in '$q'")
+      case other                     => fail(s"Can't find an 'Entity' in '$q'")
     }
 }

@@ -25,22 +25,28 @@ private[dsl] trait OrdDsl {
     def apply[T1, T2](o1: Ord[T1], o2: Ord[T2]): Ord[(T1, T2)] =
       Ord(TupleOrdering(List(o1.ord, o2.ord)))
 
-    def apply[T1, T2, T3](o1: Ord[T1],
-                          o2: Ord[T2],
-                          o3: Ord[T3]): Ord[(T1, T2, T3)] =
+    def apply[T1, T2, T3](
+      o1: Ord[T1],
+      o2: Ord[T2],
+      o3: Ord[T3]
+    ): Ord[(T1, T2, T3)] =
       Ord(TupleOrdering(List(o1.ord, o2.ord, o3.ord)))
 
-    def apply[T1, T2, T3, T4](o1: Ord[T1],
-                              o2: Ord[T2],
-                              o3: Ord[T3],
-                              o4: Ord[T4]): Ord[(T1, T2, T3, T4)] =
+    def apply[T1, T2, T3, T4](
+      o1: Ord[T1],
+      o2: Ord[T2],
+      o3: Ord[T3],
+      o4: Ord[T4]
+    ): Ord[(T1, T2, T3, T4)] =
       Ord(TupleOrdering(List(o1.ord, o2.ord, o3.ord, o4.ord)))
 
-    def apply[T1, T2, T3, T4, T5](o1: Ord[T1],
-                                  o2: Ord[T2],
-                                  o3: Ord[T3],
-                                  o4: Ord[T4],
-                                  o5: Ord[T5]): Ord[(T1, T2, T3, T4, T5)] =
+    def apply[T1, T2, T3, T4, T5](
+      o1: Ord[T1],
+      o2: Ord[T2],
+      o3: Ord[T3],
+      o4: Ord[T4],
+      o5: Ord[T5]
+    ): Ord[(T1, T2, T3, T4, T5)] =
       Ord(TupleOrdering(List(o1.ord, o2.ord, o3.ord, o4.ord, o5.ord)))
 
     def apply[T1, T2, T3, T4, T5, T6](
@@ -112,15 +118,15 @@ private[dsl] trait OrdDsl {
       )
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10](
-      o1: Ord[T1],
-      o2: Ord[T2],
-      o3: Ord[T3],
-      o4: Ord[T4],
-      o5: Ord[T5],
-      o6: Ord[T6],
-      o7: Ord[T7],
-      o8: Ord[T8],
-      o9: Ord[T9],
+      o1:  Ord[T1],
+      o2:  Ord[T2],
+      o3:  Ord[T3],
+      o4:  Ord[T4],
+      o5:  Ord[T5],
+      o6:  Ord[T6],
+      o7:  Ord[T7],
+      o8:  Ord[T8],
+      o9:  Ord[T9],
       o10: Ord[T10]
     ): Ord[(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)] =
       Ord(

@@ -24,15 +24,15 @@ trait IOMonad {
 
   protected case class FromTry[T](t: Try[T]) extends IO[T, Effect]
   protected case class Sequence[A, M[X] <: IterableOnce[X], E <: Effect](
-    in: M[IO[A, E]],
+    in:               M[IO[A, E]],
     cbfResultToValue: Factory[A, M[A]]
   ) extends IO[M[A], E]
   protected case class TransformWith[T, S, E1 <: Effect, E2 <: Effect](
     io: IO[T, E1],
-    f: Try[T] => IO[S, E2]
+    f:  Try[T] => IO[S, E2]
   ) extends IO[S, E1 with E2]
   protected case class Transactional[T, E <: Effect](io: IO[T, E])
-      extends IO[T, E with Effect.Transaction]
+    extends IO[T, E with Effect.Transaction]
 
   object IO {
 
@@ -138,7 +138,7 @@ trait IOMonad {
           (t: T) =>
             throw new NoSuchElementException(
               "IO.collect partial function is not defined at: " + t
-          )
+            )
         )
       }
 

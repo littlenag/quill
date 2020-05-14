@@ -97,7 +97,7 @@ case class FreeVariables(state: State) extends StatefulTransformer[State] {
           )
         )
       case _: Entity | _: Take | _: Drop | _: Union | _: UnionAll |
-          _: Aggregation | _: Distinct | _: Nested =>
+        _: Aggregation | _: Distinct | _: Nested =>
         super.apply(query)
     }
 

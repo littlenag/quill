@@ -120,13 +120,13 @@ object ApplyMap {
       // a.map(b => c).*join(d.map(e => f)).on((iA, iB) => on)
       //    a.*join(d).on((b, e) => on[iA := c, iB := f]).map(t => (c[b := t._1], f[e := t._2]))
       case Join(
-          tpe,
-          DetachableMap(a, b, c),
-          DetachableMap(d, e, f),
-          iA,
-          iB,
-          on
-          ) =>
+        tpe,
+        DetachableMap(a, b, c),
+        DetachableMap(d, e, f),
+        iA,
+        iB,
+        on
+        ) =>
         val onr = BetaReduction(on, iA -> c, iB -> f)
         val t = Ident("t")
         val t1 = BetaReduction(c, b -> Property(t, "_1"))

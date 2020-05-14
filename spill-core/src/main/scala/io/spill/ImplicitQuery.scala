@@ -198,7 +198,7 @@ trait ImplicitQuery {
   ): Query[P] = macro ImplicitQueryMacro.toQuery[P]
 }
 
-private[getquill] class ImplicitQueryMacro(val c: MacroContext) {
+private[spill] class ImplicitQueryMacro(val c: MacroContext) {
   import c.universe._
 
   def toQuery[P <: Product](f: Expr[Any])(implicit p: WeakTypeTag[P]): Tree = {

@@ -1,7 +1,7 @@
 package io.spill.context.mirror
 
 import java.time.LocalDate
-import java.util.{Date, UUID}
+import java.util.{ Date, UUID }
 
 import io.spill.context.Context
 
@@ -20,8 +20,10 @@ trait MirrorEncoders {
   def encoder[T]: Encoder[T] =
     MirrorEncoder((index: Index, value: T, row: PrepareRow) => row.add(value))
 
-  implicit def mappedEncoder[I, O](implicit mapped: MappedEncoding[I, O],
-                                   e: Encoder[O]): Encoder[I] =
+  implicit def mappedEncoder[I, O](implicit
+    mapped: MappedEncoding[I, O],
+                                   e: Encoder[O]
+  ): Encoder[I] =
     MirrorEncoder(
       (index: Index, value: I, row: PrepareRow) =>
         e(index, mapped.f(value), row)

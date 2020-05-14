@@ -2,7 +2,7 @@ package io.spill.dsl
 
 import io.spill.util.OptionalTypecheck
 import io.spill.util.MacroContextExt._
-import scala.reflect.macros.blackbox.{Context => MacroContext}
+import scala.reflect.macros.blackbox.{ Context => MacroContext }
 
 class EncodingDslMacro(val c: MacroContext) {
   import c.universe._
@@ -33,8 +33,10 @@ class EncodingDslMacro(val c: MacroContext) {
   def liftQuery[T](v: Tree)(implicit t: WeakTypeTag[T]): Tree =
     lift[T](v, "liftQuery")
 
-  private def lift[T](v: Tree,
-                      method: String)(implicit t: WeakTypeTag[T]): Tree =
+  private def lift[T](
+    v:      Tree,
+    method: String
+  )(implicit t: WeakTypeTag[T]): Tree =
     OptionalTypecheck(c)(q"implicitly[${c.prefix}.Encoder[$t]]") match {
       case Some(enc) =>
         q"${c.prefix}.${TermName(s"${method}Scalar")}($v)($enc)"

@@ -1,10 +1,10 @@
 package io.spill
 
 import fansi.Str
-import io.spill.ast.Renameable.{ByStrategy, Fixed}
-import io.spill.ast.Visibility.{Hidden, Visible}
+import io.spill.ast.Renameable.{ ByStrategy, Fixed }
+import io.spill.ast.Visibility.{ Hidden, Visible }
 import io.spill.ast._
-import pprint.{Renderer, Tree, Truncated}
+import pprint.{ Renderer, Tree, Truncated }
 
 object AstPrinter {
   object Implicits {
@@ -17,7 +17,7 @@ object AstPrinter {
 }
 
 class AstPrinter(traceOpinions: Boolean, traceAstSimple: Boolean)
-    extends pprint.Walker {
+  extends pprint.Walker {
   val defaultWidth: Int = 150
   val defaultHeight: Int = Integer.MAX_VALUE
   val defaultIndent: Int = 2
@@ -80,8 +80,8 @@ class AstPrinter(traceOpinions: Boolean, traceAstSimple: Boolean)
 }
 
 /**
-  * A trait to be used by elements that are not proper AST elements but should still be treated as though
-  * they were in the case where `traceAstSimple` is enabled (i.e. their toString method should be
-  * used instead of the standard qprint AST printing)
-  */
+ * A trait to be used by elements that are not proper AST elements but should still be treated as though
+ * they were in the case where `traceAstSimple` is enabled (i.e. their toString method should be
+ * used instead of the standard qprint AST printing)
+ */
 trait PseudoAst

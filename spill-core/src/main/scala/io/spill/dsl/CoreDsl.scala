@@ -1,6 +1,6 @@
 package io.spill.dsl
 
-private[getquill] trait CoreDsl
+private[spill] trait CoreDsl
     extends InfixDsl
     with OrdDsl
     with QueryDsl

@@ -1,10 +1,10 @@
 package io.spill.norm
 
 import io.spill.ast._
-import scala.collection.immutable.{Map => IMap}
+import scala.collection.immutable.{ Map => IMap }
 
 case class BetaReduction(replacements: Replacements)
-    extends StatelessTransformer {
+  extends StatelessTransformer {
 
   override def apply(ast: Ast): Ast =
     ast match {
@@ -134,7 +134,7 @@ case class BetaReduction(replacements: Replacements)
       case FlatJoin(t, a, iA, on) =>
         FlatJoin(t, apply(a), iA, BetaReduction(replacements - iA)(on))
       case _: Take | _: Entity | _: Drop | _: Union | _: UnionAll |
-          _: Aggregation | _: Distinct | _: Nested =>
+        _: Aggregation | _: Distinct | _: Nested =>
         super.apply(query)
     }
 }

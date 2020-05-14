@@ -20,7 +20,7 @@ import io.spill.util.Messages.TraceType
 
 import scala.collection.immutable.Set
 
-private[getquill] case class AvoidAliasConflict(state: Set[Ident])
+private[spill] case class AvoidAliasConflict(state: Set[Ident])
     extends StatefulTransformer[Set[Ident]] {
 
   val interp = new Interpolator(TraceType.AvoidAliasConflict, 3)
@@ -210,7 +210,7 @@ private[getquill] case class AvoidAliasConflict(state: Set[Ident])
   }
 }
 
-private[getquill] object AvoidAliasConflict {
+private[spill] object AvoidAliasConflict {
 
   def apply(q: Query): Query =
     AvoidAliasConflict(Set[Ident]())(q) match {

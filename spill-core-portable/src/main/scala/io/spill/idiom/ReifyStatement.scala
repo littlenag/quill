@@ -8,10 +8,12 @@ import scala.annotation.tailrec
 
 object ReifyStatement {
 
-  def apply(liftingPlaceholder: Int => String,
-            emptySetContainsToken: Token => Token,
-            statement: Statement,
-            forProbing: Boolean): (String, List[External]) = {
+  def apply(
+    liftingPlaceholder:    Int => String,
+    emptySetContainsToken: Token => Token,
+    statement:             Statement,
+    forProbing:            Boolean
+  ): (String, List[External]) = {
     val expanded =
       forProbing match {
         case true  => statement
@@ -21,14 +23,16 @@ object ReifyStatement {
   }
 
   private def token2string(
-    token: Token,
+    token:              Token,
     liftingPlaceholder: Int => String
   ): (String, List[External]) = {
     @tailrec
-    def apply(workList: List[Token],
-              sqlResult: Seq[String],
-              liftingResult: Seq[External],
-              liftingSize: Int): (String, List[External]) = workList match {
+    def apply(
+      workList:      List[Token],
+      sqlResult:     Seq[String],
+      liftingResult: Seq[External],
+      liftingSize:   Int
+    ): (String, List[External]) = workList match {
       case Nil => sqlResult.reverse.mkString("") -> liftingResult.reverse.toList
       case head :: tail =>
         head match {
@@ -72,14 +76,16 @@ object ReifyStatement {
     apply(List(token), Seq(), Seq(), 0)
   }
 
-  private def expandLiftings(statement: Statement,
-                             emptySetContainsToken: Token => Token) = {
+  private def expandLiftings(
+    statement:             Statement,
+    emptySetContainsToken: Token => Token
+  ) = {
     Statement {
       statement.tokens.foldLeft(List.empty[Token]) {
         case (
-            tokens,
-            SetContainsToken(a, op, ScalarLiftToken(lift: ScalarQueryLift))
-            ) =>
+          tokens,
+          SetContainsToken(a, op, ScalarLiftToken(lift: ScalarQueryLift))
+          ) =>
           lift.value.asInstanceOf[Iterable[Any]].toList match {
             case Nil => tokens :+ emptySetContainsToken(a)
             case values =>

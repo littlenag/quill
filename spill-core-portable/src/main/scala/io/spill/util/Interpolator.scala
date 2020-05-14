@@ -10,13 +10,14 @@ import io.spill.util.IndentUtil._
 import scala.collection.mutable
 import scala.util.matching.Regex
 
-class Interpolator(traceType: TraceType,
-                   defaultIndent: Int = 0,
-                   color: Boolean = Messages.traceColors,
-                   qprint: AstPrinter = Messages.qprint,
-                   out: PrintStream = System.out,
-                   tracesEnabled: (TraceType) => Boolean =
-                     Messages.tracesEnabled(_)) {
+class Interpolator(
+  traceType:     TraceType,
+  defaultIndent: Int                    = 0,
+  color:         Boolean                = Messages.traceColors,
+  qprint:        AstPrinter             = Messages.qprint,
+  out:           PrintStream            = System.out,
+  tracesEnabled: (TraceType) => Boolean = Messages.tracesEnabled(_)
+) {
   implicit class InterpolatorExt(sc: StringContext) {
     def trace(elements: Any*) = new Traceable(sc, elements)
   }

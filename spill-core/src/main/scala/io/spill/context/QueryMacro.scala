@@ -1,12 +1,12 @@
 package io.spill.context
 
 import io.spill.ast._
-import scala.reflect.macros.whitebox.{Context => MacroContext}
+import scala.reflect.macros.whitebox.{ Context => MacroContext }
 import io.spill.util.OptionalTypecheck
 import io.spill.util.EnableReflectiveCalls
 
 class QueryMacro(val c: MacroContext) extends ContextMacro {
-  import c.universe.{Ident => _, _}
+  import c.universe.{ Ident => _, _ }
 
   sealed trait FetchSizeArg
   case class UsesExplicitFetch(tree: Tree) extends FetchSizeArg
@@ -19,20 +19,22 @@ class QueryMacro(val c: MacroContext) extends ContextMacro {
 
   sealed trait ContextMethod { def name: String }
   case class StreamQuery(fetchSizeBehavior: FetchSizeArg)
-      extends ContextMethod { val name = "streamQuery" }
+    extends ContextMethod { val name = "streamQuery" }
   case object ExecuteQuery extends ContextMethod { val name = "executeQuery" }
   case object ExecuteQuerySingle extends ContextMethod {
     val name = "executeQuerySingle"
   }
   case class TranslateQuery(prettyPrintingArg: PrettyPrintingArg)
-      extends ContextMethod { val name = "translateQuery" }
+    extends ContextMethod { val name = "translateQuery" }
   case object PrepareQuery extends ContextMethod { val name = "prepareQuery" }
 
   def streamQuery[T](quoted: Tree)(implicit t: WeakTypeTag[T]): Tree =
     expandQuery[T](quoted, StreamQuery(UsesDefaultFetch))
 
-  def streamQueryFetch[T](quoted: Tree,
-                          fetchSize: Tree)(implicit t: WeakTypeTag[T]): Tree =
+  def streamQueryFetch[T](
+    quoted:    Tree,
+    fetchSize: Tree
+  )(implicit t: WeakTypeTag[T]): Tree =
     expandQuery[T](quoted, StreamQuery(UsesExplicitFetch(fetchSize)))
 
   def runQuery[T](quoted: Tree)(implicit t: WeakTypeTag[T]): Tree =
@@ -45,7 +47,8 @@ class QueryMacro(val c: MacroContext) extends ContextMacro {
     expandQuery[T](quoted, TranslateQuery(DefaultPrint))
 
   def translateQueryPrettyPrint[T](quoted: Tree, prettyPrint: Tree)(
-    implicit t: WeakTypeTag[T]
+    implicit
+    t: WeakTypeTag[T]
   ): Tree =
     expandQuery[T](quoted, TranslateQuery(ExplicitPrettyPrint(prettyPrint)))
 
@@ -53,16 +56,19 @@ class QueryMacro(val c: MacroContext) extends ContextMacro {
     expandQuery[T](quoted, PrepareQuery)
 
   private def expandQuery[T](quoted: Tree, method: ContextMethod)(
-    implicit t: WeakTypeTag[T]
+    implicit
+    t: WeakTypeTag[T]
   ) =
     OptionalTypecheck(c)(q"implicitly[${c.prefix}.Decoder[$t]]") match {
       case Some(decoder) => expandQueryWithDecoder(quoted, method, decoder)
       case None          => expandQueryWithMeta[T](quoted, method)
     }
 
-  private def expandQueryWithDecoder(quoted: Tree,
-                                     method: ContextMethod,
-                                     decoder: Tree) = {
+  private def expandQueryWithDecoder(
+    quoted:  Tree,
+    method:  ContextMethod,
+    decoder: Tree
+  ) = {
     val ast = Map(extractAst(quoted), Ident("x"), Ident("x"))
     val invocation =
       method match {
@@ -130,7 +136,8 @@ class QueryMacro(val c: MacroContext) extends ContextMacro {
   }
 
   private def expandQueryWithMeta[T](quoted: Tree, method: ContextMethod)(
-    implicit t: WeakTypeTag[T]
+    implicit
+    t: WeakTypeTag[T]
   ) = {
     val metaTpe = c.typecheck(tq"${c.prefix}.QueryMeta[$t]", c.TYPEmode).tpe
     val meta = c

@@ -3,7 +3,7 @@ package io.spill.ast
 import scala.reflect.ClassTag
 
 class CollectAst[T](p: PartialFunction[Ast, T], val state: List[T])
-    extends StatefulTransformer[List[T]] {
+  extends StatefulTransformer[List[T]] {
 
   override def apply(a: Ast) =
     a match {

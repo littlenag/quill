@@ -75,7 +75,7 @@ object NamingStrategy {
   ): CompositeNamingStrategy4[N1, N2, N3, N4] =
     new CompositeNamingStrategy4(n1, n2, n3, n4)
 
-  private[getquill] def apply(strategies: List[NamingStrategy]) = {
+  private[spill] def apply(strategies: List[NamingStrategy]) = {
     new CompositeNamingStrategy {
       override protected val elements = strategies
     }

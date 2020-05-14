@@ -6,7 +6,7 @@ import io.spill.ast.StatelessTransformer
 import io.spill.norm.capture.AvoidCapture
 import io.spill.ast.Action
 import io.spill.util.Interpolator
-import io.spill.util.Messages.{TraceType, trace}
+import io.spill.util.Messages.{ TraceType, trace }
 import io.spill.util.Messages.TraceType.Normalizations
 
 import scala.annotation.tailrec

@@ -38,8 +38,7 @@ trait Liftables {
     case UnaryOperation(a, b)     => q"$pack.UnaryOperation($a, $b)"
     case Infix(a, b, pure)        => q"$pack.Infix($a, $b, $pure)"
     case If(a, b, c)              => q"$pack.If($a, $b, $c)"
-    case Dynamic(tree: Tree)
-        if (tree.tpe <:< c.weakTypeOf[CoreDsl#Quoted[Any]]) =>
+    case Dynamic(tree: Tree) if (tree.tpe <:< c.weakTypeOf[CoreDsl#Quoted[Any]]) =>
       q"$tree.ast"
     case Dynamic(tree: Tree)              => q"$pack.Constant($tree)"
     case QuotedReference(tree: Tree, ast) => q"$ast"

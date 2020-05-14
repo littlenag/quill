@@ -33,7 +33,7 @@ trait StatefulTransformer[T] {
         val (ct, ctt) = btt.apply(c)
         (If(at, bt, ct), ctt)
 
-      case l: Dynamic => (l, this)
+      case l: Dynamic  => (l, this)
 
       case l: External => (l, this)
 

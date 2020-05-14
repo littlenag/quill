@@ -55,15 +55,19 @@ object Messages {
   def title[T](label: String, traceType: TraceType = TraceType.Standard) =
     trace[T](("=".repeat(10)) + s" $label " + ("=".repeat(10)), 0, traceType)
 
-  def trace[T](label: String,
-               numIndent: Int = 0,
-               traceType: TraceType = TraceType.Standard) =
+  def trace[T](
+    label:     String,
+    numIndent: Int       = 0,
+    traceType: TraceType = TraceType.Standard
+  ) =
     (v: T) => {
       val indent = (0 to numIndent).map(_ => "").mkString("  ")
       if (tracesEnabled(traceType))
-        println(s"$indent$label\n${{
-          if (traceColors) qprint.apply(v).render else qprint.apply(v).plainText
-        }.split("\n").map(s"$indent  " + _).mkString("\n")}")
+        println(s"$indent$label\n${
+          {
+            if (traceColors) qprint.apply(v).render else qprint.apply(v).plainText
+          }.split("\n").map(s"$indent  " + _).mkString("\n")
+        }")
       v
     }
 

@@ -1,7 +1,7 @@
 package io.spill.context.mirror
 
 import java.time.LocalDate
-import java.util.{Date, UUID}
+import java.util.{ Date, UUID }
 
 import scala.reflect.ClassTag
 import io.spill.context.Context
@@ -26,8 +26,10 @@ trait MirrorDecoders {
       (index: Index, row: ResultRow) => row.data(index).asInstanceOf[T]
     )
 
-  implicit def mappedDecoder[I, O](implicit mapped: MappedEncoding[I, O],
-                                   d: Decoder[I]): Decoder[O] =
+  implicit def mappedDecoder[I, O](implicit
+    mapped: MappedEncoding[I, O],
+                                   d: Decoder[I]
+  ): Decoder[O] =
     MirrorDecoder(
       (index: Index, row: ResultRow) => mapped.f(d.apply(index, row))
     )
@@ -38,7 +40,7 @@ trait MirrorDecoders {
         row[Option[Any]](index) match {
           case Some(v) => Some(d(0, Row(v)))
           case None    => None
-      }
+        }
     )
 
   implicit val stringDecoder: Decoder[String] = decoder[String]

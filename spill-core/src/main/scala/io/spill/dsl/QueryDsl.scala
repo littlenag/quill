@@ -5,7 +5,7 @@ import io.spill.quotation.NonQuotedException
 
 import scala.annotation.compileTimeOnly
 
-private[getquill] trait QueryDsl {
+private[spill] trait QueryDsl {
   dsl: CoreDsl =>
 
   def query[T]: EntityQuery[T] = macro QueryDslMacro.expandEntity[T]
@@ -113,9 +113,8 @@ private[getquill] trait QueryDsl {
       * @param unquote is used for conversion of [[Quoted[A]]] to [[A]] with [[unquote]]
       * @return
       */
-    def foreach[A <: Action[_], B](f: T => B)(
-      implicit unquote: B => A
-    ): BatchAction[A]
+    def foreach[A <: Action[_], B](f: T => B)(implicit
+                                              unquote: B => A): BatchAction[A]
   }
 
   sealed trait JoinQuery[A, B, R] extends Query[R] {

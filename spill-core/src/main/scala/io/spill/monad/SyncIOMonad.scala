@@ -12,12 +12,9 @@ trait SyncIOMonad extends IOMonad {
 
   type Result[T] = T
 
-  def runIO[T](quoted: Quoted[T]): IO[RunQuerySingleResult[T], Effect.Read] =
-    macro IOMonadMacro.runIO
-  def runIO[T](quoted: Quoted[Query[T]]): IO[RunQueryResult[T], Effect.Read] =
-    macro IOMonadMacro.runIO
-  def runIO(quoted: Quoted[Action[_]]): IO[RunActionResult, Effect.Write] =
-    macro IOMonadMacro.runIO
+  def runIO[T](quoted: Quoted[T]): IO[RunQuerySingleResult[T], Effect.Read] = macro IOMonadMacro.runIO
+  def runIO[T](quoted: Quoted[Query[T]]): IO[RunQueryResult[T], Effect.Read] = macro IOMonadMacro.runIO
+  def runIO(quoted: Quoted[Action[_]]): IO[RunActionResult, Effect.Write] = macro IOMonadMacro.runIO
   def runIO[T](
     quoted: Quoted[ActionReturning[_, T]]
   ): IO[RunActionReturningResult[T], Effect.Write] = macro IOMonadMacro.runIO
@@ -26,8 +23,7 @@ trait SyncIOMonad extends IOMonad {
   ): IO[RunBatchActionResult, Effect.Write] = macro IOMonadMacro.runIO
   def runIO[T](
     quoted: Quoted[BatchAction[ActionReturning[_, T]]]
-  ): IO[RunBatchActionReturningResult[T], Effect.Write] =
-    macro IOMonadMacro.runIO
+  ): IO[RunBatchActionReturningResult[T], Effect.Write] = macro IOMonadMacro.runIO
 
   case class Run[T, E <: Effect](f: () => Result[T]) extends IO[T, E]
 

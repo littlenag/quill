@@ -31,9 +31,9 @@ trait ValueComputation {
   private def is[T](tpe: Type)(implicit t: TypeTag[T]) =
     tpe <:< t.tpe
 
-  private[getquill] def value(encoding: String,
-                              tpe: Type,
-                              exclude: Tree*): Value = {
+  private[spill] def value(encoding: String,
+                           tpe: Type,
+                           exclude: Tree*): Value = {
 
     def nest(tpe: Type, term: Option[TermName]): Nested =
       caseClassConstructor(tpe) match {

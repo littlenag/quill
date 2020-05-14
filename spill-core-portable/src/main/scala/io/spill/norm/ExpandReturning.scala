@@ -3,13 +3,13 @@ package io.spill.norm
 import io.spill.ReturnAction.ReturnColumns
 import io.spill.ast._
 import io.spill.context._
-import io.spill.idiom.{Idiom, Statement}
-import io.spill.{NamingStrategy, ReturnAction}
+import io.spill.idiom.{ Idiom, Statement }
+import io.spill.{ NamingStrategy, ReturnAction }
 
 /**
-  * Take the `.returning` part in a query that contains it and return the array of columns
-  * representing of the returning seccovtion with any other operations etc... that they might contain.
-  */
+ * Take the `.returning` part in a query that contains it and return the array of columns
+ * representing of the returning seccovtion with any other operations etc... that they might contain.
+ */
 object ExpandReturning {
 
   def applyMap(
@@ -41,8 +41,8 @@ object ExpandReturning {
   }
 
   def apply(
-    returning: ReturningAction,
-    renameAlias: Option[String] = None
+    returning:   ReturningAction,
+    renameAlias: Option[String]  = None
   )(idiom: Idiom, naming: NamingStrategy): List[(Ast, Statement)] = {
     val ReturningAction(_, alias, properties) = returning
 

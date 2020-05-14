@@ -12,10 +12,10 @@ import io.spill.util.EnableReflectiveCalls
 case class QuotedAst(ast: Ast) extends StaticAnnotation
 
 trait Quotation
-    extends Liftables
-    with Unliftables
-    with Parsing
-    with ReifyLiftings {
+  extends Liftables
+  with Unliftables
+  with Parsing
+  with ReifyLiftings {
   val c: Context
   import c.universe._
 

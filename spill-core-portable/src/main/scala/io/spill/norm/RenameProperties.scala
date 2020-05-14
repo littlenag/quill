@@ -83,8 +83,10 @@ object RenameProperties extends StatelessTransformer {
       case q => (q, TupleSchema.empty)
     }
 
-  private def replaceAssignments(a: List[Assignment],
-                                 schema: Schema): List[Assignment] =
+  private def replaceAssignments(
+    a:      List[Assignment],
+    schema: Schema
+  ): List[Assignment] =
     a.map {
       case Assignment(alias, prop, value) =>
         val replace =
@@ -132,8 +134,7 @@ object RenameProperties extends StatelessTransformer {
         case (head :: tail, CaseClassSchema(props)) if (props.contains(head)) =>
           trace"Case class at $property returning " andReturn
             props(head).lookup(tail)
-        case (TupleIndex(idx) :: tail, TupleSchema(values))
-            if values.contains(idx) =>
+        case (TupleIndex(idx) :: tail, TupleSchema(values)) if values.contains(idx) =>
           trace"Tuple at at $property returning " andReturn
             values(idx).lookup(tail)
         case _ =>
@@ -166,9 +167,11 @@ object RenameProperties extends StatelessTransformer {
 
   }
 
-  def protractSchema(body: Ast,
-                     ident: Ident,
-                     schema: Schema): Option[Schema] = {
+  def protractSchema(
+    body:   Ast,
+    ident:  Ident,
+    schema: Schema
+  ): Option[Schema] = {
 
     def protractSchemaRecurse(body: Ast, schema: Schema): Option[Schema] =
       body match {
@@ -194,33 +197,33 @@ object RenameProperties extends StatelessTransformer {
         case tup @ Tuple(values) =>
           trace"Protracting Tuple $tup into new schema:" andReturn
             TupleSchema
-              .fromIndexes(
-                values.zipWithIndex
-                  .collect {
-                    case (innerBody @ HierarchicalAstEntity(), index) =>
-                      (index, protractSchemaRecurse(innerBody, schema))
-                    // pass the schema into a recursive call an extract from it when we non tuple/caseclass element
-                    case (
-                        innerBody @ PropertyMatroshka(`ident`, path),
-                        index
-                        ) =>
-                      (index, protractSchemaRecurse(innerBody, schema))
-                    // we have reached an ident i.e. recurse to pass the current schema into the tuple
-                    case (`ident`, index) =>
-                      (index, protractSchemaRecurse(ident, schema))
-                  }
-                  .collect {
-                    case (index, Some(subSchema)) => (index, subSchema)
-                  }
-              )
-              .notEmpty
+            .fromIndexes(
+              values.zipWithIndex
+                .collect {
+                  case (innerBody @ HierarchicalAstEntity(), index) =>
+                    (index, protractSchemaRecurse(innerBody, schema))
+                  // pass the schema into a recursive call an extract from it when we non tuple/caseclass element
+                  case (
+                    innerBody @ PropertyMatroshka(`ident`, path),
+                    index
+                    ) =>
+                    (index, protractSchemaRecurse(innerBody, schema))
+                  // we have reached an ident i.e. recurse to pass the current schema into the tuple
+                  case (`ident`, index) =>
+                    (index, protractSchemaRecurse(ident, schema))
+                }
+                .collect {
+                  case (index, Some(subSchema)) => (index, subSchema)
+                }
+            )
+            .notEmpty
 
         case prop @ PropertyMatroshka(`ident`, path) =>
           trace"Protraction completed schema path $prop at the schema $schema pointing to:" andReturn
             schema match {
-            //case e: EntitySchema => Some(e)
-            case _ => schema.lookup(path)
-          }
+              //case e: EntitySchema => Some(e)
+              case _ => schema.lookup(path)
+            }
         case `ident` =>
           trace"Protraction completed with the mapping identity $ident at the schema:" andReturn
             Some(schema)
@@ -260,7 +263,7 @@ object RenameProperties extends StatelessTransformer {
 
   }
   case class TupleSchema(m: collection.Map[Int, Schema] /* Zero Indexed */ )
-      extends Schema {
+    extends Schema {
     def list = m.toList.sortBy(_._1)
     def notEmpty =
       if (this.m.nonEmpty) Some(this) else None
@@ -421,18 +424,22 @@ object RenameProperties extends StatelessTransformer {
         (f(ast), schema)
     }
 
-  private def applySchema(a: Query,
-                          b: Query,
-                          f: (Ast, Ast) => Query): (Query, Schema) = {
+  private def applySchema(
+    a: Query,
+    b: Query,
+    f: (Ast, Ast) => Query
+  ): (Query, Schema) = {
     val (qa, newSchema1) = applySchema(a)
     val (qb, newSchema2) = applySchema(b)
     (f(qa, qb), CompoundSchema(newSchema1, newSchema2))
   }
 
-  private def applySchema[T](q: Query,
-                             x: Ident,
-                             p: Ast,
-                             f: (Ast, Ident, Ast) => T): (T, Schema) =
+  private def applySchema[T](
+    q: Query,
+    x: Ident,
+    p: Ast,
+    f: (Ast, Ident, Ast) => T
+  ): (T, Schema) =
     applySchema(q) match {
       case (q, schema) =>
         val replace =

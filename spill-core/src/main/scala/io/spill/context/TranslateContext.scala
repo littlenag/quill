@@ -12,12 +12,12 @@ trait TranslateContext extends TranslateContextBase {
 
   override type TranslateResult[T] = T
 
-  override private[getquill] val translateEffect
-    : ContextEffect[TranslateResult] = new ContextEffect[TranslateResult] {
-    override def wrap[T](t: => T): T = t
-    override def push[A, B](result: A)(f: A => B): B = f(result)
-    override def seq[A, B](list: List[A]): List[A] = list
-  }
+  override private[spill] val translateEffect: ContextEffect[TranslateResult] =
+    new ContextEffect[TranslateResult] {
+      override def wrap[T](t: => T): T = t
+      override def push[A, B](result: A)(f: A => B): B = f(result)
+      override def seq[A, B](list: List[A]): List[A] = list
+    }
 }
 
 trait TranslateContextBase {
@@ -25,7 +25,7 @@ trait TranslateContextBase {
 
   type TranslateResult[T]
 
-  private[getquill] val translateEffect: ContextEffect[TranslateResult]
+  private[spill] val translateEffect: ContextEffect[TranslateResult]
   import translateEffect._
 
   def translate[T](quoted: Quoted[T]): TranslateResult[String] =
@@ -83,7 +83,7 @@ trait TranslateContextBase {
       }
     }
 
-  private[getquill] def prepareParams(
+  private[spill] def prepareParams(
     statement: String,
     prepare: Prepare
   ): TranslateResult[Seq[String]]

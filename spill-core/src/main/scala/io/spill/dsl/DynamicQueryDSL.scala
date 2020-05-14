@@ -95,7 +95,8 @@ trait DynamicQueryDsl {
     set[T, U](property, spliceLift(value))
 
   def setOpt[T, U](property: Quoted[T] => Quoted[U], value: Option[U])(
-    implicit enc: Encoder[U]
+    implicit
+    enc: Encoder[U]
   ): DynamicSet[T, U] =
     value match {
       case Some(v) => setValue(property, v)
@@ -162,7 +163,7 @@ trait DynamicQueryDsl {
 
   sealed trait DynamicQuery[+T] {
 
-    protected[getquill] def q: Quoted[Query[T]]
+    protected[spill] def q: Quoted[Query[T]]
 
     protected[this] def transform[U, V, R](f: Quoted[U] => Quoted[V],
                                            t: (Ast, Ident, Ast) => Ast,
@@ -408,7 +409,7 @@ trait DynamicQueryDsl {
   }
 
   sealed trait DynamicAction[A <: Action[_]] {
-    protected[getquill] def q: Quoted[A]
+    protected[spill] def q: Quoted[A]
 
     override def toString = q.toString
   }

@@ -32,7 +32,7 @@ trait Parsing extends ValueComputation {
 
   // Variables that need to be sanitized out in various places due to internal conflicts with the way
   // macros hard handeled in MetaDsl
-  private[getquill] val dangerousVariables = Set("v").map(Ident(_))
+  private[spill] val dangerousVariables = Set("v").map(Ident(_))
 
   case class Parser[T](p: PartialFunction[Tree, T])(implicit ct: ClassTag[T]) {
 
@@ -911,7 +911,7 @@ trait Parsing extends ValueComputation {
     tpe.paramLists(0).map(_.name.toString)
   }
 
-  private[getquill] def currentIdiom: Option[Type] = {
+  private[spill] def currentIdiom: Option[Type] = {
     c.prefix.tree.tpe.baseClasses.flatMap { baseClass =>
       val baseClassTypeArgs = c.prefix.tree.tpe.baseType(baseClass).typeArgs
       baseClassTypeArgs.find { typeArg =>
@@ -920,7 +920,7 @@ trait Parsing extends ValueComputation {
     }.headOption
   }
 
-  private[getquill] def idiomReturnCapability: ReturningCapability = {
+  private[spill] def idiomReturnCapability: ReturningCapability = {
     val returnAfterInsertType =
       currentIdiom.toSeq
         .flatMap(_.members)

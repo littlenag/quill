@@ -2,7 +2,7 @@ package io.spill.quotation
 
 import io.spill.ast._
 import scala.collection.immutable.Map
-import scala.reflect.macros.whitebox.{Context => MacroContext}
+import scala.reflect.macros.whitebox.{ Context => MacroContext }
 import scala.reflect.NameTransformer
 import io.spill.dsl.EncodingDsl
 import io.spill.norm.BetaReduction
@@ -14,7 +14,7 @@ case class CaseClassValueLifting[T](value: T)
 
 trait ReifyLiftings {
   val c: MacroContext
-  import c.universe.{Ident => _, _}
+  import c.universe.{ Ident => _, _ }
 
   private val liftings = TermName("liftings")
 
@@ -24,7 +24,7 @@ trait ReifyLiftings {
   private case class Reified(value: Tree, encoder: Option[Tree])
 
   private case class ReifyLiftings(state: Map[TermName, Reified])
-      extends StatefulTransformer[Map[TermName, Reified]] {
+    extends StatefulTransformer[Map[TermName, Reified]] {
 
     private def reify(lift: Lift) =
       lift match {

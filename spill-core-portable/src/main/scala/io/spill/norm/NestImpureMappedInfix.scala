@@ -3,14 +3,14 @@ package io.spill.norm
 import io.spill.ast._
 
 /**
-  * A problem occurred in the original way infixes were done in that it was assumed that infix
-  * clauses represented pure functions. While this is true of many UDFs (e.g. `CONCAT`, `GETDATE`)
-  * it is certainly not true of many others e.g. `RAND()`, and most importantly `RANK()`. For this reason,
-  * the operations that are done in `ApplyMap` on standard AST `Map` clauses cannot be done therefore additional
-  * safety checks were introduced there in order to assure this does not happen. In addition to this however,
-  * it is necessary to add this normalization step which inserts `Nested` AST elements in every map
-  * that contains impure infix. See more information and examples in #1534.
-  */
+ * A problem occurred in the original way infixes were done in that it was assumed that infix
+ * clauses represented pure functions. While this is true of many UDFs (e.g. `CONCAT`, `GETDATE`)
+ * it is certainly not true of many others e.g. `RAND()`, and most importantly `RANK()`. For this reason,
+ * the operations that are done in `ApplyMap` on standard AST `Map` clauses cannot be done therefore additional
+ * safety checks were introduced there in order to assure this does not happen. In addition to this however,
+ * it is necessary to add this normalization step which inserts `Nested` AST elements in every map
+ * that contains impure infix. See more information and examples in #1534.
+ */
 object NestImpureMappedInfix extends StatelessTransformer {
 
   // Are there any impure infixes that exist inside the specified ASTs

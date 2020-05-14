@@ -24,7 +24,7 @@ import io.spill.ast._
   * Other places where this needs to be done (e.g. in a Tuple that `Returning` returns)
   * are done in `ExpandReturning`.
   */
-private[getquill] case class DemarcateExternalAliases(externalIdent: Ident)
+private[spill] case class DemarcateExternalAliases(externalIdent: Ident)
     extends StatelessTransformer {
 
   def applyNonOverride(idents: Ident*)(ast: Ast) =

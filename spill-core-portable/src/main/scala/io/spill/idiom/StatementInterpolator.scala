@@ -35,7 +35,8 @@ object StatementInterpolator {
     }
 
   implicit def externalTokenizer(
-    implicit tagTokenizer: Tokenizer[Tag],
+    implicit
+    tagTokenizer:  Tokenizer[Tag],
     liftTokenizer: Tokenizer[Lift]
   ): Tokenizer[External] =
     Tokenizer[External] {
@@ -55,7 +56,7 @@ object StatementInterpolator {
       case tag: QuotationTag => QuotationTagToken(tag)
       case lift: ScalarLift  => ScalarLiftToken(lift)
       // TODO Longer Explanation
-      case lift: Tag => fail("Cannot tokenizer a non-scalar tagging.")
+      case lift: Tag         => fail("Cannot tokenizer a non-scalar tagging.")
       case lift: Lift =>
         fail(
           s"Can't tokenize a non-scalar lifting. ${lift.name}\n" +
@@ -110,7 +111,8 @@ object StatementInterpolator {
   }
 
   implicit def listTokenizer[T](
-    implicit tokenize: Tokenizer[T]
+    implicit
+    tokenize: Tokenizer[T]
   ): Tokenizer[List[T]] =
     Tokenizer[List[T]] {
       case list => list.mkStmt()
@@ -152,8 +154,10 @@ object StatementInterpolator {
         .apply(tokens)
     }
 
-    private def checkLengths(args: scala.collection.Seq[Any],
-                             parts: Seq[String]): Unit =
+    private def checkLengths(
+      args:  scala.collection.Seq[Any],
+      parts: Seq[String]
+    ): Unit =
       if (parts.length != args.length + 1)
         throw new IllegalArgumentException(
           "wrong number of arguments (" + args.length

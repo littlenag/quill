@@ -5,12 +5,12 @@ import io.spill.norm.BetaReduction
 import io.spill.quotation.ReifyLiftings
 import io.spill.util.MacroContextExt._
 
-import scala.reflect.macros.whitebox.{Context => MacroContext}
-import io.spill.util.{EnableReflectiveCalls, OptionalTypecheck}
+import scala.reflect.macros.whitebox.{ Context => MacroContext }
+import io.spill.util.{ EnableReflectiveCalls, OptionalTypecheck }
 
 class ActionMacro(val c: MacroContext) extends ContextMacro with ReifyLiftings {
 
-  import c.universe.{Function => _, Ident => _, _}
+  import c.universe.{ Function => _, Ident => _, _ }
 
   def translateQuery(quoted: Tree): Tree =
     translateQueryPrettyPrint(quoted, q"false")

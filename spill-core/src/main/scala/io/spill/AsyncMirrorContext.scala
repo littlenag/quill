@@ -52,7 +52,8 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
   }
 
   override def performIO[T](io: IO[T, _], transactional: Boolean = false)(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Result[T] =
     transactional match {
       case true =>
@@ -61,7 +62,8 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
     }
 
   case class ActionMirror(string: String, prepareRow: PrepareRow)(
-    implicit val ec: ExecutionContext
+    implicit
+    val ec: ExecutionContext
   )
 
   case class ActionReturningMirror[T](
@@ -72,7 +74,8 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
   )(implicit val ec: ExecutionContext)
 
   case class BatchActionMirror(groups: List[(String, List[Row])])(
-    implicit val ec: ExecutionContext
+    implicit
+    val ec: ExecutionContext
   )
 
   case class BatchActionReturningMirror[T](
@@ -101,7 +104,8 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
     Future(QueryMirror(string, prepare(Row())._2, extractor))
 
   def executeAction(string: String, prepare: Prepare = identityPrepare)(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ) =
     Future(ActionMirror(string, prepare(Row())._2))
 
@@ -143,7 +147,7 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
       }, extractor)
     }
 
-  override private[getquill] def prepareParams(statement: String,
-                                               prepare: Prepare): Seq[String] =
+  override private[spill] def prepareParams(statement: String,
+                                            prepare: Prepare): Seq[String] =
     prepare(Row())._2.data.map(prepareParam)
 }

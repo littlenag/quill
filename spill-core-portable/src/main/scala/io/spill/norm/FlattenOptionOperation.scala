@@ -5,7 +5,7 @@ import io.spill.ast.Implicits._
 import io.spill.norm.ConcatBehavior.NonAnsiConcat
 
 class FlattenOptionOperation(concatBehavior: ConcatBehavior)
-    extends StatelessTransformer {
+  extends StatelessTransformer {
 
   private def emptyOrNot(b: Boolean, ast: Ast) =
     if (b) OptionIsEmpty(ast) else OptionNonEmpty(ast)
@@ -22,8 +22,7 @@ class FlattenOptionOperation(concatBehavior: ConcatBehavior)
     CollectAst(ast) {
       case If(_, _, _)    => true
       case Infix(_, _, _) => true
-      case BinaryOperation(_, StringOperator.`+`, _)
-          if (concatBehavior == NonAnsiConcat) =>
+      case BinaryOperation(_, StringOperator.`+`, _) if (concatBehavior == NonAnsiConcat) =>
         true
     }.nonEmpty
 

@@ -1,10 +1,10 @@
 package io.spill.util
 
-import io.spill.util.Messages.{debugEnabled, prettyPrint}
+import io.spill.util.Messages.{ debugEnabled, prettyPrint }
 import io.spill.idiom.Idiom
 import io.spill.util.IndentUtil._
 
-import scala.reflect.macros.blackbox.{Context => MacroContext}
+import scala.reflect.macros.blackbox.{ Context => MacroContext }
 
 object MacroContextExt {
 

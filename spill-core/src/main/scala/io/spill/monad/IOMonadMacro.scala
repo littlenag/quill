@@ -1,6 +1,6 @@
 package io.spill.monad
 
-import scala.reflect.macros.blackbox.{Context => MacroContext}
+import scala.reflect.macros.blackbox.{ Context => MacroContext }
 import scala.concurrent.ExecutionContext
 
 class IOMonadMacro(val c: MacroContext) {

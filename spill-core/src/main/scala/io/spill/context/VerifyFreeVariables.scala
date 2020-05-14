@@ -1,6 +1,6 @@
 package io.spill.context
 
-import scala.reflect.macros.whitebox.{Context => MacroContext}
+import scala.reflect.macros.whitebox.{ Context => MacroContext }
 import io.spill.quotation.FreeVariables
 import io.spill.ast.Ast
 import io.spill.util.MacroContextExt._
