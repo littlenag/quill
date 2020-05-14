@@ -12,6 +12,8 @@ val CodegenTag = Tags.Tag("CodegenTag")
 (concurrentRestrictions in Global) += Tags.exclusive(CodegenTag)
 
 lazy val baseModules = Seq[sbt.ClasspathDep[sbt.ProjectReference]](
+  `spill-core-portable-jvm`, `spill-core-portable-js`,
+  `spill-core-jvm`, `spill-core-js`,
   `quill-core-portable-jvm`, `quill-core-portable-js`,
   `quill-core-jvm`, `quill-core-js`,
   `quill-sql-portable-jvm`, `quill-sql-portable-js`,
@@ -127,6 +129,55 @@ lazy val superPure = new sbtcrossproject.CrossType {
 def pprintVersion(v: String) = {
   if(v.startsWith("2.11")) "0.5.4" else "0.5.5"
 }
+
+// SPILL SPILL
+lazy val `spill-core-portable` =
+  crossProject(JVMPlatform, JSPlatform).crossType(superPure)
+    .settings(commonSettings: _*)
+    .settings(mimaSettings: _*)
+    .settings(libraryDependencies ++= Seq(
+      "com.typesafe"               %  "config"        % "1.4.0",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+      "org.scala-lang"             %  "scala-reflect" % scalaVersion.value
+    ))
+    .jsSettings(
+      libraryDependencies ++= Seq(
+        "com.lihaoyi" %%% "pprint" % pprintVersion(scalaVersion.value),
+        "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
+        "com.lihaoyi" %%% "pprint" % "0.5.4",
+        "org.scala-js" %%% "scalajs-java-time" % "0.2.5"
+      ),
+      coverageExcludedPackages := ".*"
+    )
+
+lazy val `spill-core-portable-jvm` = `spill-core-portable`.jvm
+lazy val `spill-core-portable-js` = `spill-core-portable`.js
+
+
+// SPILL core
+lazy val `spill-core` =
+  crossProject(JVMPlatform, JSPlatform).crossType(superPure)
+    .settings(commonSettings: _*)
+    .settings(mimaSettings: _*)
+    .settings(libraryDependencies ++= Seq(
+      "com.typesafe"               %  "config"        % "1.4.0",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+      "org.scala-lang"             %  "scala-reflect" % scalaVersion.value
+    ))
+    .jsSettings(
+      libraryDependencies ++= Seq(
+        "com.lihaoyi" %%% "pprint" % pprintVersion(scalaVersion.value),
+        "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
+        "org.scala-js" %%% "scalajs-java-time" % "0.2.5"
+      ),
+      coverageExcludedPackages := ".*"
+    )
+    .dependsOn(`spill-core-portable` % "compile->compile")
+
+lazy val `spill-core-jvm` = `spill-core`.jvm
+lazy val `spill-core-js` = `spill-core`.js
+
+///////
 
 lazy val `quill-core-portable` =
   crossProject(JVMPlatform, JSPlatform).crossType(superPure)
