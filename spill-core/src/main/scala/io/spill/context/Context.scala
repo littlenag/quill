@@ -9,7 +9,7 @@ import java.io.Closeable
 import scala.util.Try
 import io.spill.{NamingStrategy, ReturnAction}
 
-trait Context[Idiom <: io.getquill.idiom.Idiom, Naming <: NamingStrategy]
+trait Context[Idiom <: io.spill.idiom.Idiom, Naming <: NamingStrategy]
     extends Closeable
     with CoreDsl {
 
