@@ -1,6 +1,6 @@
 package io.spill.dsl
 
-import scala.reflect.macros.whitebox.{Context => MacroContext}
+import scala.reflect.macros.whitebox.{ Context => MacroContext }
 import io.spill.Embedded
 import io.spill.util.OptionalTypecheck
 import io.spill.util.MacroContextExt._
@@ -13,27 +13,33 @@ trait ValueComputation {
     val term: Option[TermName]
     def nestedAndOptional: Boolean
   }
-  case class Nested(term: Option[TermName],
-                    tpe: Type,
-                    params: List[List[Value]],
-                    optional: Boolean)
-      extends Value {
+  case class Nested(
+    term:     Option[TermName],
+    tpe:      Type,
+    params:   List[List[Value]],
+    optional: Boolean
+  )
+    extends Value {
     def nestedAndOptional: Boolean = optional
   }
-  case class Scalar(term: Option[TermName],
-                    tpe: Type,
-                    decoder: Tree,
-                    optional: Boolean)
-      extends Value {
+  case class Scalar(
+    term:     Option[TermName],
+    tpe:      Type,
+    decoder:  Tree,
+    optional: Boolean
+  )
+    extends Value {
     def nestedAndOptional: Boolean = false
   }
 
   private def is[T](tpe: Type)(implicit t: TypeTag[T]) =
     tpe <:< t.tpe
 
-  private[spill] def value(encoding: String,
-                           tpe: Type,
-                           exclude: Tree*): Value = {
+  private[spill] def value(
+    encoding: String,
+    tpe:      Type,
+    exclude:  Tree*
+  ): Value = {
 
     def nest(tpe: Type, term: Option[TermName]): Nested =
       caseClassConstructor(tpe) match {
@@ -57,33 +63,33 @@ trait ValueComputation {
       OptionalTypecheck(c)(
         q"implicitly[${c.prefix}.${TypeName(encoding)}[$tpe]]"
       ) match {
-        case Some(encoding) =>
-          Scalar(term, tpe, encoding, optional = is[Option[Any]](tpe))
-        case None =>
-          def value(tpe: Type) =
-            tpe match {
-              case tpe if !is[Embedded](tpe) && nested =>
-                c.fail(
-                  s"""Can't find implicit `$encoding[$tpe]`. Please, do one of the following things:
+          case Some(encoding) =>
+            Scalar(term, tpe, encoding, optional = is[Option[Any]](tpe))
+          case None =>
+            def value(tpe: Type) =
+              tpe match {
+                case tpe if !is[Embedded](tpe) && nested =>
+                  c.fail(
+                    s"""Can't find implicit `$encoding[$tpe]`. Please, do one of the following things:
                      |1. ensure that implicit `$encoding[$tpe]` is provided and there are no other conflicting implicits;
                      |2. make `$tpe` `Embedded` case class or `AnyVal`.
                    """.stripMargin
-                )
+                  )
 
-              case tpe =>
-                nest(tpe, term)
+                case tpe =>
+                  nest(tpe, term)
+              }
+
+            if (isNone(tpe)) {
+              c.fail(
+                "Cannot handle untyped `None` objects. Use a cast e.g. `None:Option[String]` or `Option.empty`."
+              )
+            } else if (is[Option[Any]](tpe)) {
+              value(tpe.typeArgs.head).copy(optional = true)
+            } else {
+              value(tpe)
             }
-
-          if (isNone(tpe)) {
-            c.fail(
-              "Cannot handle untyped `None` objects. Use a cast e.g. `None:Option[String]` or `Option.empty`."
-            )
-          } else if (is[Option[Any]](tpe)) {
-            value(tpe.typeArgs.head).copy(optional = true)
-          } else {
-            value(tpe)
-          }
-      }
+        }
     }
 
     def filterExcludes(value: Value) = {

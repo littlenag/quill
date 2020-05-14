@@ -6,7 +6,7 @@ import scala.language.implicitConversions
 import scala.language.experimental.macros
 import io.spill.ast._
 
-import scala.reflect.macros.whitebox.{Context => MacroContext}
+import scala.reflect.macros.whitebox.{ Context => MacroContext }
 import io.spill.util.Messages._
 
 import scala.annotation.tailrec
@@ -59,8 +59,7 @@ trait DynamicQueryDsl {
     def dynamic: DynamicActionReturning[T, U] = DynamicActionReturning(q)
   }
 
-  implicit def dynamicUnquote[T](d: DynamicQuery[T]): Query[T] =
-    macro DynamicQueryDslMacro.dynamicUnquote
+  implicit def dynamicUnquote[T](d: DynamicQuery[T]): Query[T] = macro DynamicQueryDslMacro.dynamicUnquote
 
   implicit def toQuoted[T](q: DynamicQuery[T]): Quoted[Query[T]] = q.q
   implicit def toQuoted[T](q: DynamicEntityQuery[T]): Quoted[EntityQuery[T]] =
@@ -76,22 +75,30 @@ trait DynamicQueryDsl {
 
   case class DynamicAlias[T](property: Quoted[T] => Quoted[Any], name: String)
 
-  def alias[T](property: Quoted[T] => Quoted[Any],
-               name: String): DynamicAlias[T] = DynamicAlias(property, name)
+  def alias[T](
+    property: Quoted[T] => Quoted[Any],
+    name:     String
+  ): DynamicAlias[T] = DynamicAlias(property, name)
 
   sealed trait DynamicSet[T, U]
 
-  case class DynamicSetValue[T, U](property: Quoted[T] => Quoted[U],
-                                   value: Quoted[U])
-      extends DynamicSet[T, U]
+  case class DynamicSetValue[T, U](
+    property: Quoted[T] => Quoted[U],
+    value:    Quoted[U]
+  )
+    extends DynamicSet[T, U]
   case class DynamicSetEmpty[T, U]() extends DynamicSet[T, U]
 
-  def set[T, U](property: Quoted[T] => Quoted[U],
-                value: Quoted[U]): DynamicSet[T, U] =
+  def set[T, U](
+    property: Quoted[T] => Quoted[U],
+    value:    Quoted[U]
+  ): DynamicSet[T, U] =
     DynamicSetValue(property, value)
 
-  def setValue[T, U](property: Quoted[T] => Quoted[U],
-                     value: U)(implicit enc: Encoder[U]): DynamicSet[T, U] =
+  def setValue[T, U](
+    property: Quoted[T] => Quoted[U],
+    value:    U
+  )(implicit enc: Encoder[U]): DynamicSet[T, U] =
     set[T, U](property, spliceLift(value))
 
   def setOpt[T, U](property: Quoted[T] => Quoted[U], value: Option[U])(
@@ -106,12 +113,14 @@ trait DynamicQueryDsl {
   def set[T, U](property: String, value: Quoted[U]): DynamicSet[T, U] =
     set((f: Quoted[T]) => splice(Property(f.ast, property)), value)
 
-  def setValue[T, U](property: String,
-                     value: U)(implicit enc: Encoder[U]): DynamicSet[T, U] =
+  def setValue[T, U](
+    property: String,
+    value:    U
+  )(implicit enc: Encoder[U]): DynamicSet[T, U] =
     set(property, spliceLift(value))
 
   def dynamicQuerySchema[T](
-    entity: String,
+    entity:  String,
     columns: DynamicAlias[T]*
   ): DynamicEntityQuery[T] = {
     val aliases =
@@ -165,17 +174,19 @@ trait DynamicQueryDsl {
 
     protected[spill] def q: Quoted[Query[T]]
 
-    protected[this] def transform[U, V, R](f: Quoted[U] => Quoted[V],
-                                           t: (Ast, Ident, Ast) => Ast,
-                                           r: Ast => R = dyn _) =
+    protected[this] def transform[U, V, R](
+      f: Quoted[U] => Quoted[V],
+      t: (Ast, Ident, Ast) => Ast,
+      r: Ast => R                 = dyn _
+    ) =
       withFreshIdent { v =>
         r(t(q.ast, v, f(splice(v)).ast))
       }
 
     protected[this] def transformOpt[O, R, D <: DynamicQuery[T]](
-      opt: Option[O],
-      f: (Quoted[T], Quoted[O]) => Quoted[R],
-      t: (Quoted[T] => Quoted[R]) => D,
+      opt:  Option[O],
+      f:    (Quoted[T], Quoted[O]) => Quoted[R],
+      t:    (Quoted[T] => Quoted[R]) => D,
       thiz: D
     )(implicit enc: Encoder[O]) =
       opt match {
@@ -292,7 +303,7 @@ trait DynamicQueryDsl {
 
     private[this] def flatJoin[R](
       tpe: JoinType,
-      on: Quoted[T] => Quoted[Boolean]
+      on:  Quoted[T] => Quoted[Boolean]
     ): DynamicQuery[R] =
       withFreshIdent { v =>
         dyn(FlatJoin(tpe, q.ast, v, on(splice(v)).ast))
@@ -332,9 +343,11 @@ trait DynamicQueryDsl {
     override def toString = q.toString
   }
 
-  case class DynamicJoinQuery[A, B, R](tpe: JoinType,
-                                       q1: Quoted[Query[A]],
-                                       q2: Quoted[Query[B]]) {
+  case class DynamicJoinQuery[A, B, R](
+    tpe: JoinType,
+    q1:  Quoted[Query[A]],
+    q2:  Quoted[Query[B]]
+  ) {
     def on(f: (Quoted[A], Quoted[B]) => Quoted[Boolean]): DynamicQuery[R] = {
       withFreshIdent { iA =>
         withFreshIdent { iB =>
@@ -345,7 +358,7 @@ trait DynamicQueryDsl {
   }
 
   case class DynamicEntityQuery[T](q: Quoted[EntityQuery[T]])
-      extends DynamicQuery[T] {
+    extends DynamicQuery[T] {
 
     private[this] def dyn[R](ast: Ast) =
       DynamicEntityQuery(splice[EntityQuery[R]](ast))
@@ -368,8 +381,7 @@ trait DynamicQueryDsl {
     override def map[R](f: Quoted[T] => Quoted[R]): DynamicEntityQuery[R] =
       transform(f, Map, dyn)
 
-    def insertValue(value: T): DynamicInsert[T] =
-      macro DynamicQueryDslMacro.insertValue
+    def insertValue(value: T): DynamicInsert[T] = macro DynamicQueryDslMacro.insertValue
 
     type DynamicAssignment[U] = ((Quoted[T] => Quoted[U]), U)
 
@@ -387,8 +399,7 @@ trait DynamicQueryDsl {
         splice(Insert(DynamicEntityQuery.this.q.ast, assignemnts(l.toList)))
       )
 
-    def updateValue(value: T): DynamicUpdate[T] =
-      macro DynamicQueryDslMacro.updateValue
+    def updateValue(value: T): DynamicUpdate[T] = macro DynamicQueryDslMacro.updateValue
 
     def update(sets: DynamicSet[T, _]*): DynamicUpdate[T] =
       DynamicUpdate(
@@ -475,7 +486,7 @@ trait DynamicQueryDsl {
     q: Quoted[ActionReturning[E, Output]]
   ) extends DynamicAction[ActionReturning[E, Output]]
   case class DynamicUpdate[E](q: Quoted[Update[E]])
-      extends DynamicAction[Update[E]]
+    extends DynamicAction[Update[E]]
   case class DynamicDelete[E](q: Quoted[Delete[E]])
-      extends DynamicAction[Delete[E]]
+    extends DynamicAction[Delete[E]]
 }

@@ -1,25 +1,25 @@
 package io.spill
 
-import io.spill.context.{Context, TranslateContext}
+import io.spill.context.{ Context, TranslateContext }
 import io.spill.context.mirror.Row
 import scala.concurrent.Future
 import io.spill.context.mirror.MirrorEncoders
 import io.spill.context.mirror.MirrorDecoders
 import io.spill.monad.ScalaFutureIOMonad
 import scala.concurrent.ExecutionContext
-import io.spill.idiom.{Idiom => BaseIdiom}
+import io.spill.idiom.{ Idiom => BaseIdiom }
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
 
 class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
-  val idiom: Idiom,
+  val idiom:  Idiom,
   val naming: Naming
 ) extends Context[Idiom, Naming]
-    with TranslateContext
-    with MirrorEncoders
-    with MirrorDecoders
-    with ScalaFutureIOMonad {
+  with TranslateContext
+  with MirrorEncoders
+  with MirrorDecoders
+  with ScalaFutureIOMonad {
 
   override type PrepareRow = Row
   override type ResultRow = Row
@@ -43,7 +43,7 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
   def transaction[T](f: => T) = f
 
   case class TransactionalExecutionContext(ec: ExecutionContext)
-      extends ExecutionContext {
+    extends ExecutionContext {
     def execute(runnable: Runnable): Unit =
       ec.execute(runnable)
 
@@ -67,9 +67,9 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
   )
 
   case class ActionReturningMirror[T](
-    string: String,
-    prepareRow: PrepareRow,
-    extractor: Extractor[T],
+    string:            String,
+    prepareRow:        PrepareRow,
+    extractor:         Extractor[T],
     returningBehavior: ReturnAction
   )(implicit val ec: ExecutionContext)
 
@@ -79,26 +79,26 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
   )
 
   case class BatchActionReturningMirror[T](
-    groups: List[(String, ReturnAction, List[PrepareRow])],
+    groups:    List[(String, ReturnAction, List[PrepareRow])],
     extractor: Extractor[T]
   )(implicit val ec: ExecutionContext)
 
   case class QueryMirror[T](
-    string: String,
+    string:     String,
     prepareRow: PrepareRow,
-    extractor: Extractor[T]
+    extractor:  Extractor[T]
   )(implicit val ec: ExecutionContext)
 
   def executeQuery[T](
-    string: String,
-    prepare: Prepare = identityPrepare,
+    string:    String,
+    prepare:   Prepare      = identityPrepare,
     extractor: Extractor[T] = identityExtractor
   )(implicit ec: ExecutionContext) =
     Future(QueryMirror(string, prepare(Row())._2, extractor))
 
   def executeQuerySingle[T](
-    string: String,
-    prepare: Prepare = identityPrepare,
+    string:    String,
+    prepare:   Prepare      = identityPrepare,
     extractor: Extractor[T] = identityExtractor
   )(implicit ec: ExecutionContext) =
     Future(QueryMirror(string, prepare(Row())._2, extractor))
@@ -110,9 +110,9 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
     Future(ActionMirror(string, prepare(Row())._2))
 
   def executeActionReturning[O](
-    string: String,
-    prepare: Prepare = identityPrepare,
-    extractor: Extractor[O],
+    string:            String,
+    prepare:           Prepare      = identityPrepare,
+    extractor:         Extractor[O],
     returningBehavior: ReturnAction
   )(implicit ec: ExecutionContext) =
     Future(
@@ -137,7 +137,7 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
     }
 
   def executeBatchActionReturning[T](
-    groups: List[BatchGroupReturning],
+    groups:    List[BatchGroupReturning],
     extractor: Extractor[T]
   )(implicit ec: ExecutionContext) =
     Future {
@@ -147,7 +147,9 @@ class AsyncMirrorContext[Idiom <: BaseIdiom, Naming <: NamingStrategy](
       }, extractor)
     }
 
-  override private[spill] def prepareParams(statement: String,
-                                            prepare: Prepare): Seq[String] =
+  override private[spill] def prepareParams(
+    statement: String,
+    prepare:   Prepare
+  ): Seq[String] =
     prepare(Row())._2.data.map(prepareParam)
 }

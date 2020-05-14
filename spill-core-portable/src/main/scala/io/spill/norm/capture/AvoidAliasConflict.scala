@@ -14,14 +14,14 @@ import io.spill.ast.{
   StatefulTransformer,
   _
 }
-import io.spill.norm.{BetaReduction, Normalize}
+import io.spill.norm.{ BetaReduction, Normalize }
 import io.spill.util.Interpolator
 import io.spill.util.Messages.TraceType
 
 import scala.collection.immutable.Set
 
 private[spill] case class AvoidAliasConflict(state: Set[Ident])
-    extends StatefulTransformer[Set[Ident]] {
+  extends StatefulTransformer[Set[Ident]] {
 
   val interp = new Interpolator(TraceType.AvoidAliasConflict, 3)
   import interp._
@@ -76,75 +76,75 @@ private[spill] case class AvoidAliasConflict(state: Set[Ident])
     trace"Uncapture $qq " andReturn
       qq match {
 
-      case FlatMap(Unaliased(q), x, p) =>
-        apply(x, p)(FlatMap(q, _, _))
+        case FlatMap(Unaliased(q), x, p) =>
+          apply(x, p)(FlatMap(q, _, _))
 
-      case ConcatMap(Unaliased(q), x, p) =>
-        apply(x, p)(ConcatMap(q, _, _))
+        case ConcatMap(Unaliased(q), x, p) =>
+          apply(x, p)(ConcatMap(q, _, _))
 
-      case Map(Unaliased(q), x, p) =>
-        apply(x, p)(Map(q, _, _))
+        case Map(Unaliased(q), x, p) =>
+          apply(x, p)(Map(q, _, _))
 
-      case Filter(Unaliased(q), x, p) =>
-        apply(x, p)(Filter(q, _, _))
+        case Filter(Unaliased(q), x, p) =>
+          apply(x, p)(Filter(q, _, _))
 
-      case GroupBy(Unaliased(q), x, p) =>
-        apply(x, p)(GroupBy(q, _, _))
+        case GroupBy(Unaliased(q), x, p) =>
+          apply(x, p)(GroupBy(q, _, _))
 
-      case m @ FlatMap(CanRealias(), _, _) =>
-        recurseAndApply(m)(m => (m.query, m.alias, m.body))(FlatMap(_, _, _))
+        case m @ FlatMap(CanRealias(), _, _) =>
+          recurseAndApply(m)(m => (m.query, m.alias, m.body))(FlatMap(_, _, _))
 
-      case m @ ConcatMap(CanRealias(), _, _) =>
-        recurseAndApply(m)(m => (m.query, m.alias, m.body))(ConcatMap(_, _, _))
+        case m @ ConcatMap(CanRealias(), _, _) =>
+          recurseAndApply(m)(m => (m.query, m.alias, m.body))(ConcatMap(_, _, _))
 
-      case m @ Map(CanRealias(), _, _) =>
-        recurseAndApply(m)(m => (m.query, m.alias, m.body))(Map(_, _, _))
+        case m @ Map(CanRealias(), _, _) =>
+          recurseAndApply(m)(m => (m.query, m.alias, m.body))(Map(_, _, _))
 
-      case m @ Filter(CanRealias(), _, _) =>
-        recurseAndApply(m)(m => (m.query, m.alias, m.body))(Filter(_, _, _))
+        case m @ Filter(CanRealias(), _, _) =>
+          recurseAndApply(m)(m => (m.query, m.alias, m.body))(Filter(_, _, _))
 
-      case m @ GroupBy(CanRealias(), _, _) =>
-        recurseAndApply(m)(m => (m.query, m.alias, m.body))(GroupBy(_, _, _))
+        case m @ GroupBy(CanRealias(), _, _) =>
+          recurseAndApply(m)(m => (m.query, m.alias, m.body))(GroupBy(_, _, _))
 
-      case SortBy(Unaliased(q), x, p, o) =>
-        trace"Unaliased $qq uncapturing $x" andReturn
+        case SortBy(Unaliased(q), x, p, o) =>
+          trace"Unaliased $qq uncapturing $x" andReturn
           apply(x, p)(SortBy(q, _, _, o))
 
-      case Join(t, a, b, iA, iB, o) =>
-        trace"Uncapturing Join $qq" andReturn {
-          val (ar, art) = apply(a)
-          val (br, brt) = art.apply(b)
-          val freshA = freshIdent(iA, brt.state)
-          val freshB = freshIdent(iB, brt.state + freshA)
-          val or =
-            trace"Uncapturing Join: Replace $iA -> $freshA, $iB -> $freshB" andReturn
-              BetaReduction(o, iA -> freshA, iB -> freshB)
-          val (orr, orrt) =
-            trace"Uncapturing Join: Recurse with state: ${brt.state} + $freshA + $freshB" andReturn
-              AvoidAliasConflict(brt.state + freshA + freshB)(or)
+        case Join(t, a, b, iA, iB, o) =>
+          trace"Uncapturing Join $qq" andReturn {
+            val (ar, art) = apply(a)
+            val (br, brt) = art.apply(b)
+            val freshA = freshIdent(iA, brt.state)
+            val freshB = freshIdent(iB, brt.state + freshA)
+            val or =
+              trace"Uncapturing Join: Replace $iA -> $freshA, $iB -> $freshB" andReturn
+                BetaReduction(o, iA -> freshA, iB -> freshB)
+            val (orr, orrt) =
+              trace"Uncapturing Join: Recurse with state: ${brt.state} + $freshA + $freshB" andReturn
+                AvoidAliasConflict(brt.state + freshA + freshB)(or)
 
-          (Join(t, ar, br, freshA, freshB, orr), orrt)
-        }
+            (Join(t, ar, br, freshA, freshB, orr), orrt)
+          }
 
-      case FlatJoin(t, a, iA, o) =>
-        trace"Uncapturing FlatJoin $qq" andReturn {
-          val (ar, art) = apply(a)
-          val freshA = freshIdent(iA)
-          val or =
-            trace"Uncapturing FlatJoin: Reducing $iA -> $freshA" andReturn
-              BetaReduction(o, iA -> freshA)
-          val (orr, orrt) =
-            trace"Uncapturing FlatJoin: Recurse with state: ${art.state} + $freshA" andReturn
-              AvoidAliasConflict(art.state + freshA)(or)
+        case FlatJoin(t, a, iA, o) =>
+          trace"Uncapturing FlatJoin $qq" andReturn {
+            val (ar, art) = apply(a)
+            val freshA = freshIdent(iA)
+            val or =
+              trace"Uncapturing FlatJoin: Reducing $iA -> $freshA" andReturn
+                BetaReduction(o, iA -> freshA)
+            val (orr, orrt) =
+              trace"Uncapturing FlatJoin: Recurse with state: ${art.state} + $freshA" andReturn
+                AvoidAliasConflict(art.state + freshA)(or)
 
-          (FlatJoin(t, ar, freshA, orr), orrt)
-        }
+            (FlatJoin(t, ar, freshA, orr), orrt)
+          }
 
-      case _: Entity | _: FlatMap | _: ConcatMap | _: Map | _: Filter |
-          _: SortBy | _: GroupBy | _: Aggregation | _: Take | _: Drop |
-          _: Union | _: UnionAll | _: Distinct | _: Nested =>
-        super.apply(qq)
-    }
+        case _: Entity | _: FlatMap | _: ConcatMap | _: Map | _: Filter |
+        _: SortBy | _: GroupBy | _: Aggregation | _: Take | _: Drop |
+        _: Union | _: UnionAll | _: Distinct | _: Nested =>
+          super.apply(qq)
+      }
 
   private def apply(x: Ident, p: Ast)(
     f: (Ident, Ast) => Query
@@ -176,19 +176,19 @@ private[spill] case class AvoidAliasConflict(state: Set[Ident])
   }
 
   /**
-    * Sometimes we need to change the variables in a function because they will might conflict with some variable
-    * further up in the macro. Right now, this only happens when you do something like this:
-    * <code>
-    * val q = quote { (v: Foo) => query[Foo].insert(v) }
-    * run(q(lift(v)))
-    * </code>
-    * Since 'v' is used by actionMeta in order to map keys to values for insertion, using it as a function argument
-    * messes up the output SQL like so:
-    * <code>
-    *   INSERT INTO MyTestEntity (s,i,l,o) VALUES (s,i,l,o) instead of (?,?,?,?)
-    * </code>
-    * Therefore, we need to have a method to remove such conflicting variables from Function ASTs
-    */
+   * Sometimes we need to change the variables in a function because they will might conflict with some variable
+   * further up in the macro. Right now, this only happens when you do something like this:
+   * <code>
+   * val q = quote { (v: Foo) => query[Foo].insert(v) }
+   * run(q(lift(v)))
+   * </code>
+   * Since 'v' is used by actionMeta in order to map keys to values for insertion, using it as a function argument
+   * messes up the output SQL like so:
+   * <code>
+   *   INSERT INTO MyTestEntity (s,i,l,o) VALUES (s,i,l,o) instead of (?,?,?,?)
+   * </code>
+   * Therefore, we need to have a method to remove such conflicting variables from Function ASTs
+   */
   private def applyFunction(f: Function): Function = {
     val (newBody, _, newParams) =
       f.params.foldLeft((f.body, state, List[Ident]())) {
@@ -218,11 +218,13 @@ private[spill] object AvoidAliasConflict {
     }
 
   /**
-    * Make sure query parameters do not collide with paramters of a AST function. Do this
-    * by walkning through the function's subtree and transforming and queries encountered.
-    */
-  def sanitizeVariables(f: Function,
-                        dangerousVariables: Set[Ident]): Function = {
+   * Make sure query parameters do not collide with paramters of a AST function. Do this
+   * by walkning through the function's subtree and transforming and queries encountered.
+   */
+  def sanitizeVariables(
+    f:                  Function,
+    dangerousVariables: Set[Ident]
+  ): Function = {
     AvoidAliasConflict(dangerousVariables).applyFunction(f)
   }
 

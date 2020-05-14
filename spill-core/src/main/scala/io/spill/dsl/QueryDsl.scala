@@ -11,13 +11,17 @@ private[spill] trait QueryDsl {
   def query[T]: EntityQuery[T] = macro QueryDslMacro.expandEntity[T]
 
   @compileTimeOnly(NonQuotedException.message)
-  def querySchema[T](entity: String,
-                     columns: (T => (Any, String))*): EntityQuery[T] =
+  def querySchema[T](
+    entity:  String,
+    columns: (T => (Any, String))*
+  ): EntityQuery[T] =
     NonQuotedException()
 
   @compileTimeOnly(NonQuotedException.message)
-  def impliedQuerySchema[T](entity: String,
-                            columns: (T => (Any, String))*): EntityQuery[T] =
+  def impliedQuerySchema[T](
+    entity:  String,
+    columns: (T => (Any, String))*
+  ): EntityQuery[T] =
     NonQuotedException()
 
   implicit class NullableColumnExtensions[A](o: Option[A]) {
@@ -109,12 +113,11 @@ private[spill] trait QueryDsl {
     def nested: Query[T]
 
     /**
-      *
-      * @param unquote is used for conversion of [[Quoted[A]]] to [[A]] with [[unquote]]
-      * @return
-      */
-    def foreach[A <: Action[_], B](f: T => B)(implicit
-                                              unquote: B => A): BatchAction[A]
+     *
+     * @param unquote is used for conversion of [[Quoted[A]]] to [[A]] with [[unquote]]
+     * @return
+     */
+    def foreach[A <: Action[_], B](f: T => B)(implicit unquote: B => A): BatchAction[A]
   }
 
   sealed trait JoinQuery[A, B, R] extends Query[R] {
@@ -154,30 +157,32 @@ private[spill] trait QueryDsl {
       NonQuotedException()
 
     @compileTimeOnly(NonQuotedException.message)
-    def onConflictUpdate(assign: ((E, E) => (Any, Any)),
-                         assigns: ((E, E) => (Any, Any))*): Insert[E] =
+    def onConflictUpdate(
+      assign:  ((E, E) => (Any, Any)),
+      assigns: ((E, E) => (Any, Any))*
+    ): Insert[E] =
       NonQuotedException()
 
     /**
-      * Generates an atomic INSERT or UPDATE (upsert) action if supported.
-      *
-      * @param targets - conflict target
-      * @param assigns - update statement, declared as function: `(table, excluded) => (assign, result)`
-      *                `table` - is used to extract column for update assignment and reference existing row
-      *                `excluded` - aliases excluded table, e.g. row proposed for insertion.
-      *                `assign` - left hand side of assignment. Should be accessed from `table` argument
-      *                `result` - right hand side of assignment.
-      *
-      * Example usage:
-      * {{{
-      *   insert.onConflictUpdate(_.id)((t, e) => t.col -> (e.col + t.col))
-      * }}}
-      * If insert statement violates conflict target then the column `col` of row will be updated with sum of
-      * existing value and and proposed `col` in insert.
-      */
+     * Generates an atomic INSERT or UPDATE (upsert) action if supported.
+     *
+     * @param targets - conflict target
+     * @param assigns - update statement, declared as function: `(table, excluded) => (assign, result)`
+     *                `table` - is used to extract column for update assignment and reference existing row
+     *                `excluded` - aliases excluded table, e.g. row proposed for insertion.
+     *                `assign` - left hand side of assignment. Should be accessed from `table` argument
+     *                `result` - right hand side of assignment.
+     *
+     * Example usage:
+     * {{{
+     *   insert.onConflictUpdate(_.id)((t, e) => t.col -> (e.col + t.col))
+     * }}}
+     * If insert statement violates conflict target then the column `col` of row will be updated with sum of
+     * existing value and and proposed `col` in insert.
+     */
     @compileTimeOnly(NonQuotedException.message)
     def onConflictUpdate(target: E => Any, targets: (E => Any)*)(
-      assign: ((E, E) => (Any, Any)),
+      assign:  ((E, E) => (Any, Any)),
       assigns: ((E, E) => (Any, Any))*
     ): Insert[E] = NonQuotedException()
   }

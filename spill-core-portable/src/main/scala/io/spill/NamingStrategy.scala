@@ -26,23 +26,22 @@ case class CompositeNamingStrategy2[N1 <: NamingStrategy, N2 <: NamingStrategy](
   override protected val elements = List(n1, n2)
 }
 
-case class CompositeNamingStrategy3[N1 <: NamingStrategy,
-                                    N2 <: NamingStrategy,
-                                    N3 <: NamingStrategy](n1: N1,
-                                                          n2: N2,
-                                                          n3: N3)
-    extends CompositeNamingStrategy {
+case class CompositeNamingStrategy3[N1 <: NamingStrategy, N2 <: NamingStrategy, N3 <: NamingStrategy](
+  n1: N1,
+  n2: N2,
+  n3: N3
+)
+  extends CompositeNamingStrategy {
   override protected val elements = List(n1, n2, n3)
 }
 
-case class CompositeNamingStrategy4[N1 <: NamingStrategy,
-                                    N2 <: NamingStrategy,
-                                    N3 <: NamingStrategy,
-                                    N4 <: NamingStrategy](n1: N1,
-                                                          n2: N2,
-                                                          n3: N3,
-                                                          n4: N4)
-    extends CompositeNamingStrategy {
+case class CompositeNamingStrategy4[N1 <: NamingStrategy, N2 <: NamingStrategy, N3 <: NamingStrategy, N4 <: NamingStrategy](
+  n1: N1,
+  n2: N2,
+  n3: N3,
+  n4: N4
+)
+  extends CompositeNamingStrategy {
   override protected val elements = List(n1, n2, n3, n4)
 }
 
@@ -64,10 +63,7 @@ object NamingStrategy {
   ): CompositeNamingStrategy3[N1, N2, N3] =
     new CompositeNamingStrategy3(n1, n2, n3)
 
-  def apply[N1 <: NamingStrategy,
-            N2 <: NamingStrategy,
-            N3 <: NamingStrategy,
-            N4 <: NamingStrategy](
+  def apply[N1 <: NamingStrategy, N2 <: NamingStrategy, N3 <: NamingStrategy, N4 <: NamingStrategy](
     n1: N1,
     n2: N2,
     n3: N3,

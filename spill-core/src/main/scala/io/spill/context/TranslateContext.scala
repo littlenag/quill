@@ -28,33 +28,36 @@ trait TranslateContextBase {
   private[spill] val translateEffect: ContextEffect[TranslateResult]
   import translateEffect._
 
-  def translate[T](quoted: Quoted[T]): TranslateResult[String] =
-    macro QueryMacro.translateQuery[T]
-  def translate[T](quoted: Quoted[Query[T]]): TranslateResult[String] =
-    macro QueryMacro.translateQuery[T]
-  def translate(quoted: Quoted[Action[_]]): TranslateResult[String] =
-    macro ActionMacro.translateQuery
+  def translate[T](quoted: Quoted[T]): TranslateResult[String] = macro QueryMacro.translateQuery[T]
+  def translate[T](quoted: Quoted[Query[T]]): TranslateResult[String] = macro QueryMacro.translateQuery[T]
+  def translate(quoted: Quoted[Action[_]]): TranslateResult[String] = macro ActionMacro.translateQuery
   def translate(
     quoted: Quoted[BatchAction[Action[_]]]
   ): TranslateResult[List[String]] = macro ActionMacro.translateBatchQuery
 
-  def translate[T](quoted: Quoted[T],
-                   prettyPrint: Boolean): TranslateResult[String] =
-    macro QueryMacro.translateQueryPrettyPrint[T]
-  def translate[T](quoted: Quoted[Query[T]],
-                   prettyPrint: Boolean): TranslateResult[String] =
-    macro QueryMacro.translateQueryPrettyPrint[T]
-  def translate(quoted: Quoted[Action[_]],
-                prettyPrint: Boolean): TranslateResult[String] =
-    macro ActionMacro.translateQueryPrettyPrint
-  def translate(quoted: Quoted[BatchAction[Action[_]]],
-                prettyPrint: Boolean): TranslateResult[List[String]] =
-    macro ActionMacro.translateBatchQueryPrettyPrint
+  def translate[T](
+    quoted:      Quoted[T],
+    prettyPrint: Boolean
+  ): TranslateResult[String] = macro QueryMacro.translateQueryPrettyPrint[T]
+  def translate[T](
+    quoted:      Quoted[Query[T]],
+    prettyPrint: Boolean
+  ): TranslateResult[String] = macro QueryMacro.translateQueryPrettyPrint[T]
+  def translate(
+    quoted:      Quoted[Action[_]],
+    prettyPrint: Boolean
+  ): TranslateResult[String] = macro ActionMacro.translateQueryPrettyPrint
+  def translate(
+    quoted:      Quoted[BatchAction[Action[_]]],
+    prettyPrint: Boolean
+  ): TranslateResult[List[String]] = macro ActionMacro.translateBatchQueryPrettyPrint
 
-  def translateQuery[T](statement: String,
-                        prepare: Prepare = identityPrepare,
-                        extractor: Extractor[T] = identityExtractor,
-                        prettyPrint: Boolean = false): TranslateResult[String] =
+  def translateQuery[T](
+    statement:   String,
+    prepare:     Prepare      = identityPrepare,
+    extractor:   Extractor[T] = identityExtractor,
+    prettyPrint: Boolean      = false
+  ): TranslateResult[String] =
     push(prepareParams(statement, prepare)) { params =>
       val query =
         if (params.nonEmpty) {
@@ -72,8 +75,8 @@ trait TranslateContextBase {
     }
 
   def translateBatchQuery(
-    groups: List[BatchGroup],
-    prettyPrint: Boolean = false
+    groups:      List[BatchGroup],
+    prettyPrint: Boolean          = false
   ): TranslateResult[List[String]] =
     seq {
       groups.flatMap { group =>
@@ -85,7 +88,7 @@ trait TranslateContextBase {
 
   private[spill] def prepareParams(
     statement: String,
-    prepare: Prepare
+    prepare:   Prepare
   ): TranslateResult[Seq[String]]
 
   @tailrec

@@ -6,7 +6,7 @@ import io.spill.Embedded
 import io.spill.context._
 import io.spill.norm.BetaReduction
 import io.spill.util.MacroContextExt.RichContext
-import io.spill.dsl.{CoreDsl, QueryDsl, ValueComputation}
+import io.spill.dsl.{ CoreDsl, QueryDsl, ValueComputation }
 import io.spill.norm.capture.AvoidAliasConflict
 import io.spill.idiom.Idiom
 
@@ -15,7 +15,7 @@ import scala.collection.immutable.StringOps
 import scala.reflect.macros.TypecheckException
 import io.spill.ast.Implicits._
 import io.spill.ast.Renameable.Fixed
-import io.spill.ast.Visibility.{Hidden, Visible}
+import io.spill.ast.Visibility.{ Hidden, Visible }
 import io.spill.util.Interleave
 
 trait Parsing extends ValueComputation {
@@ -45,8 +45,7 @@ trait Parsing extends ValueComputation {
 
     def unapply(tree: Tree): Option[T] =
       tree match {
-        case q"$source.withFilter(($alias) => $body)"
-            if (alias.name.toString.contains("ifrefutable")) =>
+        case q"$source.withFilter(($alias) => $body)" if (alias.name.toString.contains("ifrefutable")) =>
           unapply(source)
         case other =>
           p.lift(tree)
@@ -87,7 +86,7 @@ trait Parsing extends ValueComputation {
   }
 
   val patMatchValParser: Parser[Val] = Parser[Val] {
-    case q"$mods val $name: $typ = ${patMatchParser(value)}" =>
+    case q"$mods val $name: $typ = ${ patMatchParser(value) }" =>
       Val(ident(name), value)
   }
 
@@ -96,9 +95,11 @@ trait Parsing extends ValueComputation {
       patMatchParser(expr, fields, body)
   }
 
-  private def patMatchParser(tupleTree: Tree,
-                             fieldsTree: Tree,
-                             bodyTree: Tree) = {
+  private def patMatchParser(
+    tupleTree:  Tree,
+    fieldsTree: Tree,
+    bodyTree:   Tree
+  ) = {
     val tuple = astParser(tupleTree)
     val fields = astParser(fieldsTree)
     val body = astParser(bodyTree)
@@ -164,31 +165,31 @@ trait Parsing extends ValueComputation {
 
   val boxingParser: Parser[Ast] = Parser[Ast] {
     // BigDecimal
-    case q"$pack.int2bigDecimal(${astParser(v)})"            => v
-    case q"$pack.long2bigDecimal(${astParser(v)})"           => v
-    case q"$pack.double2bigDecimal(${astParser(v)})"         => v
-    case q"$pack.javaBigDecimal2bigDecimal(${astParser(v)})" => v
+    case q"$pack.int2bigDecimal(${ astParser(v) })"            => v
+    case q"$pack.long2bigDecimal(${ astParser(v) })"           => v
+    case q"$pack.double2bigDecimal(${ astParser(v) })"         => v
+    case q"$pack.javaBigDecimal2bigDecimal(${ astParser(v) })" => v
 
     // Predef autoboxing
-    case q"$pack.byte2Byte(${astParser(v)})"       => v
-    case q"$pack.short2Short(${astParser(v)})"     => v
-    case q"$pack.char2Character(${astParser(v)})"  => v
-    case q"$pack.int2Integer(${astParser(v)})"     => v
-    case q"$pack.long2Long(${astParser(v)})"       => v
-    case q"$pack.float2Float(${astParser(v)})"     => v
-    case q"$pack.double2Double(${astParser(v)})"   => v
-    case q"$pack.boolean2Boolean(${astParser(v)})" => v
-    case q"$pack.augmentString(${astParser(v)})"   => v
-    case q"$pack.unaugmentString(${astParser(v)})" => v
+    case q"$pack.byte2Byte(${ astParser(v) })"                 => v
+    case q"$pack.short2Short(${ astParser(v) })"               => v
+    case q"$pack.char2Character(${ astParser(v) })"            => v
+    case q"$pack.int2Integer(${ astParser(v) })"               => v
+    case q"$pack.long2Long(${ astParser(v) })"                 => v
+    case q"$pack.float2Float(${ astParser(v) })"               => v
+    case q"$pack.double2Double(${ astParser(v) })"             => v
+    case q"$pack.boolean2Boolean(${ astParser(v) })"           => v
+    case q"$pack.augmentString(${ astParser(v) })"             => v
+    case q"$pack.unaugmentString(${ astParser(v) })"           => v
 
-    case q"$pack.Byte2byte(${astParser(v)})"       => v
-    case q"$pack.Short2short(${astParser(v)})"     => v
-    case q"$pack.Character2char(${astParser(v)})"  => v
-    case q"$pack.Integer2int(${astParser(v)})"     => v
-    case q"$pack.Long2long(${astParser(v)})"       => v
-    case q"$pack.Float2float(${astParser(v)})"     => v
-    case q"$pack.Double2double(${astParser(v)})"   => v
-    case q"$pack.Boolean2boolean(${astParser(v)})" => v
+    case q"$pack.Byte2byte(${ astParser(v) })"                 => v
+    case q"$pack.Short2short(${ astParser(v) })"               => v
+    case q"$pack.Character2char(${ astParser(v) })"            => v
+    case q"$pack.Integer2int(${ astParser(v) })"               => v
+    case q"$pack.Long2long(${ astParser(v) })"                 => v
+    case q"$pack.Float2float(${ astParser(v) })"               => v
+    case q"$pack.Double2double(${ astParser(v) })"             => v
+    case q"$pack.Boolean2boolean(${ astParser(v) })"           => v
   }
 
   val queryParser: Parser[Ast] = Parser[Ast] {
@@ -197,34 +198,28 @@ trait Parsing extends ValueComputation {
       // Unused, it's here only to make eclipse's presentation compiler happy
       Entity("unused", Nil)
 
-    case q"$pack.querySchema[$t](${name: String}, ..$properties)" =>
+    case q"$pack.querySchema[$t](${ name: String }, ..$properties)" =>
       Entity.Opinionated(name, properties.map(propertyAliasParser(_)), Fixed)
 
-    case q"$pack.impliedQuerySchema[$t](${name: String}, ..$properties)" =>
+    case q"$pack.impliedQuerySchema[$t](${ name: String }, ..$properties)" =>
       Entity(name, properties.map(propertyAliasParser(_)))
 
-    case q"$source.filter(($alias) => $body)"
-        if (is[CoreDsl#Query[Any]](source)) =>
+    case q"$source.filter(($alias) => $body)" if (is[CoreDsl#Query[Any]](source)) =>
       Filter(astParser(source), identParser(alias), astParser(body))
 
-    case q"$source.withFilter(($alias) => $body)"
-        if (is[CoreDsl#Query[Any]](source)) =>
+    case q"$source.withFilter(($alias) => $body)" if (is[CoreDsl#Query[Any]](source)) =>
       Filter(astParser(source), identParser(alias), astParser(body))
 
-    case q"$source.map[$t](($alias) => $body)"
-        if (is[CoreDsl#Query[Any]](source)) =>
+    case q"$source.map[$t](($alias) => $body)" if (is[CoreDsl#Query[Any]](source)) =>
       Map(astParser(source), identParser(alias), astParser(body))
 
-    case q"$source.flatMap[$t](($alias) => $body)"
-        if (is[CoreDsl#Query[Any]](source)) =>
+    case q"$source.flatMap[$t](($alias) => $body)" if (is[CoreDsl#Query[Any]](source)) =>
       FlatMap(astParser(source), identParser(alias), astParser(body))
 
-    case q"$source.concatMap[$t, $u](($alias) => $body)($ev)"
-        if (is[CoreDsl#Query[Any]](source)) =>
+    case q"$source.concatMap[$t, $u](($alias) => $body)($ev)" if (is[CoreDsl#Query[Any]](source)) =>
       ConcatMap(astParser(source), identParser(alias), astParser(body))
 
-    case q"$source.sortBy[$t](($alias) => $body)($ord)"
-        if (is[CoreDsl#Query[Any]](source)) =>
+    case q"$source.sortBy[$t](($alias) => $body)($ord)" if (is[CoreDsl#Query[Any]](source)) =>
       SortBy(
         astParser(source),
         identParser(alias),
@@ -232,8 +227,7 @@ trait Parsing extends ValueComputation {
         astParser(ord)
       )
 
-    case q"$source.groupBy[$t](($alias) => $body)"
-        if (is[CoreDsl#Query[Any]](source)) =>
+    case q"$source.groupBy[$t](($alias) => $body)" if (is[CoreDsl#Query[Any]](source)) =>
       GroupBy(astParser(source), identParser(alias), astParser(body))
 
     case q"$a.value[$t]" if (is[CoreDsl#Query[Any]](a)) => astParser(a)
@@ -263,13 +257,13 @@ trait Parsing extends ValueComputation {
     case q"$source.++[$t]($n)" if (is[CoreDsl#Query[Any]](source)) =>
       UnionAll(astParser(source), astParser(n))
 
-    case q"${joinCallParser(typ, a, Some(b))}.on(($aliasA, $aliasB) => $body)" =>
+    case q"${ joinCallParser(typ, a, Some(b)) }.on(($aliasA, $aliasB) => $body)" =>
       Join(typ, a, b, identParser(aliasA), identParser(aliasB), astParser(body))
 
-    case q"${joinCallParser(typ, a, None)}($alias => $body)" =>
+    case q"${ joinCallParser(typ, a, None) }($alias => $body)" =>
       FlatJoin(typ, a, identParser(alias), astParser(body))
 
-    case q"${joinCallParser(typ, a, b)}" =>
+    case q"${ joinCallParser(typ, a, b) }" =>
       c.fail("a join clause must be followed by 'on'.")
 
     case q"$source.distinct" if (is[CoreDsl#Query[Any]](source)) =>
@@ -282,7 +276,7 @@ trait Parsing extends ValueComputation {
 
   implicit val propertyAliasParser: Parser[PropertyAlias] =
     Parser[PropertyAlias] {
-      case q"(($x1) => $pack.Predef.ArrowAssoc[$t]($prop).$arrow[$v](${alias: String}))" =>
+      case q"(($x1) => $pack.Predef.ArrowAssoc[$t]($prop).$arrow[$v](${ alias: String }))" =>
         def path(tree: Tree): List[String] =
           tree match {
             case q"$a.$b" =>
@@ -338,7 +332,7 @@ trait Parsing extends ValueComputation {
   val impureInfixParser = combinedInfixParser(false)
 
   def combinedInfixParser(infixIsPure: Boolean): Parser[Ast] = Parser[Ast] {
-    case q"$pack.InfixInterpolator(scala.StringContext.apply(..${parts: List[String]})).infix(..$params)" =>
+    case q"$pack.InfixInterpolator(scala.StringContext.apply(..${ parts: List[String] })).infix(..$params)" =>
       if (parts.find(_.endsWith("#")).isDefined) {
         val elements =
           parts.zipWithIndex.flatMap {
@@ -404,7 +398,7 @@ trait Parsing extends ValueComputation {
     case c.universe.Ident(TermName(name)) => identClean(Ident(name))
     case q"$cls.this.$i"                  => identClean(Ident(i.decodedName.toString))
     case c.universe
-          .Bind(TermName(name), c.universe.Ident(termNames.WILDCARD)) =>
+      .Bind(TermName(name), c.universe.Ident(termNames.WILDCARD)) =>
       identClean(Ident(name))
   }
   private def identClean(x: Ident): Ident =
@@ -413,14 +407,14 @@ trait Parsing extends ValueComputation {
     identClean(Ident(x.decodedName.toString))
 
   /**
-    * In order to guarentee consistent behavior across multiple databases, we have begun to explicitly to null-check
-    * nullable columns that are wrapped inside of `Option[T]` whenever a `Option.map`, `Option.flatMap`, `Option.forall`, and
-    * `Option.exists` are used. However, we would like users to be warned that the behavior of improperly structured queries
-    * may change as a result of this modification (see #1302 for more details). This method search the subtree of the
-    * respective Option methods and creates a warning if any `If(_, _, _)` AST elements are found inside. Since these
-    * can be found deeply nested in the AST (e.g. inside of `BinaryOperation` nodes etc...) it is necessary to recursively
-    * traverse into the subtree via a stateful transformer in order to discovery this.
-    */
+   * In order to guarentee consistent behavior across multiple databases, we have begun to explicitly to null-check
+   * nullable columns that are wrapped inside of `Option[T]` whenever a `Option.map`, `Option.flatMap`, `Option.forall`, and
+   * `Option.exists` are used. However, we would like users to be warned that the behavior of improperly structured queries
+   * may change as a result of this modification (see #1302 for more details). This method search the subtree of the
+   * respective Option methods and creates a warning if any `If(_, _, _)` AST elements are found inside. Since these
+   * can be found deeply nested in the AST (e.g. inside of `BinaryOperation` nodes etc...) it is necessary to recursively
+   * traverse into the subtree via a stateful transformer in order to discovery this.
+   */
   private def warnConditionalsExist(ast: OptionOperation) = {
     def searchSubtreeAndWarn(subtree: Ast, warning: String) = {
       val results = CollectAst.byType[If](subtree)
@@ -460,25 +454,25 @@ trait Parsing extends ValueComputation {
   }
 
   /**
-    * Process scala Option-related DSL into AST constructs.
-    * In Option[T] if T is a row type (typically a product or instance of Embedded)
-    * the it is impossible to physically null check in SQL (e.g. you cannot do
-    * `select p.* from People p where p is not null`). However, when a column (or "leaf-type")
-    * is encountered, doing a null check during operations such as `map` or `flatMap` is necessary
-    * in order for constructs like case statements to work correctly.
-    * <br>For example,
-    * the statement:
-    *
-    * `<pre>query[Person].map(_.name + " S.r.").getOrElse("unknown")</pre>`
-    * needs to become:
-    *
-    * `<pre>select case when p.name is not null then p.name + 'S.r' else 'unknown' end from ...</pre>`
-    * Otherwise it will not function correctly. This latter kind of operation is involves null checking
-    * versus the former (i.e. the table-select example) which cannot, and is therefore called "Unchecked."
-    *
-    * The `isOptionRowType` method checks if the type-parameter of an option is a Product. The isOptionEmbedded
-    * checks if it an embedded object.
-    */
+   * Process scala Option-related DSL into AST constructs.
+   * In Option[T] if T is a row type (typically a product or instance of Embedded)
+   * the it is impossible to physically null check in SQL (e.g. you cannot do
+   * `select p.* from People p where p is not null`). However, when a column (or "leaf-type")
+   * is encountered, doing a null check during operations such as `map` or `flatMap` is necessary
+   * in order for constructs like case statements to work correctly.
+   * <br>For example,
+   * the statement:
+   *
+   * `<pre>query[Person].map(_.name + " S.r.").getOrElse("unknown")</pre>`
+   * needs to become:
+   *
+   * `<pre>select case when p.name is not null then p.name + 'S.r' else 'unknown' end from ...</pre>`
+   * Otherwise it will not function correctly. This latter kind of operation is involves null checking
+   * versus the former (i.e. the table-select example) which cannot, and is therefore called "Unchecked."
+   *
+   * The `isOptionRowType` method checks if the type-parameter of an option is a Product. The isOptionEmbedded
+   * checks if it an embedded object.
+   */
   val optionOperationParser: Parser[OptionOperation] = Parser[OptionOperation] {
 
     case q"$o.flatMap[$t]({($alias) => $body})" if is[Option[Any]](o) =>
@@ -534,15 +528,13 @@ trait Parsing extends ValueComputation {
 
     case q"$o.orNull[$t]($v)" if is[Option[Any]](o) =>
       OptionOrNull(astParser(o))
-    case q"$prefix.NullableColumnExtensions[$nt]($o).getOrNull"
-        if is[Option[Any]](o) =>
+    case q"$prefix.NullableColumnExtensions[$nt]($o).getOrNull" if is[Option[Any]](o) =>
       OptionGetOrNull(astParser(o))
   }
 
   val traversableOperationParser: Parser[IterableOperation] =
     Parser[IterableOperation] {
-      case q"$col.contains($body)"
-          if isBaseType[collection.Map[Any, Any]](col) =>
+      case q"$col.contains($body)" if isBaseType[collection.Map[Any, Any]](col) =>
         MapContains(astParser(col), astParser(body))
       case q"$col.contains($body)" if isBaseType[Set[Any]](col) =>
         SetContains(astParser(col), astParser(body))
@@ -598,18 +590,17 @@ trait Parsing extends ValueComputation {
         f.lift(t.decodedName.toString)
     }
     Parser[Operation] {
-      case q"$a.${operator(op: BinaryOperator)}($b)"
-          if cond(a) => // test on right tree is not necessary and broken in 2.13
+      case q"$a.${ operator(op: BinaryOperator) }($b)" if cond(a) => // test on right tree is not necessary and broken in 2.13
         BinaryOperation(astParser(a), op, astParser(b))
-      case q"$a.${operator(op: UnaryOperator)}" if (cond(a)) =>
+      case q"$a.${ operator(op: UnaryOperator) }" if (cond(a)) =>
         UnaryOperation(op, astParser(a))
-      case q"$a.${operator(op: UnaryOperator)}()" if (cond(a)) =>
+      case q"$a.${ operator(op: UnaryOperator) }()" if (cond(a)) =>
         UnaryOperation(op, astParser(a))
     }
   }
 
   val functionApplyParser: Parser[Operation] = Parser[Operation] {
-    case q"${astParser(a)}.apply[..$t](...$values)" =>
+    case q"${ astParser(a) }.apply[..$t](...$values)" =>
       FunctionApply(a, values.flatten.map(astParser(_)))
   }
 
@@ -774,14 +765,12 @@ trait Parsing extends ValueComputation {
     tpe.typeSymbol.fullName startsWith "scala.Tuple"
 
   /**
-    * Need special handling to check if a type is null since need to check if it's Option, Some or None. Don't want
-    * to use `<:<` since that would also match things like `Nothing` and `Null`.
-    */
+   * Need special handling to check if a type is null since need to check if it's Option, Some or None. Don't want
+   * to use `<:<` since that would also match things like `Nothing` and `Null`.
+   */
   def isOptionType(tpe: Type) = {
     val era = tpe.erasure
-    era =:= typeOf[Option[Any]] || era =:= typeOf[Some[Any]] || era =:= typeOf[
-      None.type
-    ]
+    era =:= typeOf[Option[Any]] || era =:= typeOf[Some[Any]] || era =:= typeOf[None.type]
   }
 
   object ClassTypeRefMatch {
@@ -792,23 +781,21 @@ trait Parsing extends ValueComputation {
   }
 
   /**
-    * Recursively traverse an `Option[T]` or `Option[Option[T]]`, or `Option[Option[Option[T]]]` etc...
-    * until we find the `T`. Stop at a specified depth.
-    */
+   * Recursively traverse an `Option[T]` or `Option[Option[T]]`, or `Option[Option[Option[T]]]` etc...
+   * until we find the `T`. Stop at a specified depth.
+   */
   @tailrec
   private def innerOptionParam(tpe: Type, maxDepth: Option[Int]): Type =
     tpe match {
       // If it's a ref-type and an Option, pull out the argument
-      case TypeRef(_, cls, List(arg))
-          if (cls.isClass && cls.asClass.fullName == "scala.Option") && maxDepth
-            .forall(_ > 0) =>
+      case TypeRef(_, cls, List(arg)) if (cls.isClass && cls.asClass.fullName == "scala.Option") && maxDepth
+        .forall(_ > 0) =>
         innerOptionParam(arg, maxDepth.map(_ - 1))
       // If it's not a ref-type but an Option, convert to a ref-type and reprocess
       // also since Nothing is a subtype of everything need to know to stop searching once Nothing
       // has been reached (since we have not gone inside anything, do not decrement the depth here).
-      case _
-          if (isOptionType(tpe) && !(tpe =:= typeOf[Nothing])) && maxDepth
-            .forall(_ > 0) =>
+      case _ if (isOptionType(tpe) && !(tpe =:= typeOf[Nothing])) && maxDepth
+        .forall(_ > 0) =>
         innerOptionParam(tpe.baseType(typeOf[Option[Any]].typeSymbol), maxDepth)
       // Otherwise we have gotten to the actual type inside the nesting. Check what it is.
       case other => other
@@ -843,8 +830,7 @@ trait Parsing extends ValueComputation {
     case q"scala.Option.empty[$t]"       => OptionNone
     case Literal(c.universe.Constant(v)) => Constant(v)
     case q"((..$v))" if (v.size > 1)     => Tuple(v.map(astParser(_)))
-    case q"new $ccTerm(..$v)"
-        if (isCaseClass(c.WeakTypeTag(ccTerm.tpe.erasure))) => {
+    case q"new $ccTerm(..$v)" if (isCaseClass(c.WeakTypeTag(ccTerm.tpe.erasure))) => {
       val values = v.map(astParser(_))
       val params = firstConstructorParamList(c.WeakTypeTag(ccTerm.tpe.erasure))
       CaseClass(params.zip(values))
@@ -854,12 +840,11 @@ trait Parsing extends ValueComputation {
     case q"io.spill.dsl.UnlimitedTuple.apply($v)" => astParser(v)
     case q"io.spill.dsl.UnlimitedTuple.apply(..$v)" =>
       Tuple(v.map(astParser(_)))
-    case q"$ccCompanion(..$v)"
-        if (
-          ccCompanion.tpe != null &&
-            ccCompanion.children.length > 0 &&
-            isCaseClassCompanion(ccCompanion)
-        ) => {
+    case q"$ccCompanion(..$v)" if (
+      ccCompanion.tpe != null &&
+      ccCompanion.children.length > 0 &&
+      isCaseClassCompanion(ccCompanion)
+    ) => {
       val values = v.map(astParser(_))
       val params = firstParamList(c.WeakTypeTag(ccCompanion.tpe.erasure))
       CaseClass(params.zip(values))
@@ -886,8 +871,7 @@ trait Parsing extends ValueComputation {
       // Fix for SI-7567 Ideally this should be
       // moduleClass.companion == resultType.typeSymbol but .companion
       // returns NoSymbol where in a local context (e.g. inside a method).
-    } yield
-      (resultType.typeSymbol.name.toTypeName == moduleClass.name.toTypeName)
+    } yield (resultType.typeSymbol.name.toTypeName == moduleClass.name.toTypeName)
     output.getOrElse(false)
   }
 
@@ -925,24 +909,20 @@ trait Parsing extends ValueComputation {
       currentIdiom.toSeq
         .flatMap(_.members)
         .collect {
-          case ms: MethodSymbol
-              if (ms.name.toString == "idiomReturningCapability") =>
+          case ms: MethodSymbol if (ms.name.toString == "idiomReturningCapability") =>
             Some(ms.returnType)
         }
         .headOption
         .flatten
 
     returnAfterInsertType match {
-      case Some(returnType)
-          if (returnType =:= typeOf[ReturningClauseSupported]) =>
+      case Some(returnType) if (returnType =:= typeOf[ReturningClauseSupported]) =>
         ReturningClauseSupported
       case Some(returnType) if (returnType =:= typeOf[OutputClauseSupported]) =>
         OutputClauseSupported
-      case Some(returnType)
-          if (returnType =:= typeOf[ReturningSingleFieldSupported]) =>
+      case Some(returnType) if (returnType =:= typeOf[ReturningSingleFieldSupported]) =>
         ReturningSingleFieldSupported
-      case Some(returnType)
-          if (returnType =:= typeOf[ReturningMultipleFieldSupported]) =>
+      case Some(returnType) if (returnType =:= typeOf[ReturningMultipleFieldSupported]) =>
         ReturningMultipleFieldSupported
       case Some(returnType) if (returnType =:= typeOf[ReturningNotSupported]) =>
         ReturningNotSupported
@@ -970,13 +950,13 @@ trait Parsing extends ValueComputation {
       case ReturningMultipleFieldSupported =>
         returnBody match {
           case CaseClass(list) if (list.forall {
-                case (_, Property(_, _)) => true
-                case _                   => false
-              }) =>
+            case (_, Property(_, _)) => true
+            case _                   => false
+          }) =>
           case Tuple(list) if (list.forall {
-                case Property(_, _) => true
-                case _              => false
-              })              =>
+            case Property(_, _) => true
+            case _              => false
+          }) =>
           case Property(_, _) =>
           case other =>
             c.fail(
@@ -1002,8 +982,7 @@ trait Parsing extends ValueComputation {
   }
 
   val actionParser: Parser[Ast] = Parser[Ast] {
-    case q"$query.$method(..$assignments)"
-        if (method.decodedName.toString == "update") =>
+    case q"$query.$method(..$assignments)" if (method.decodedName.toString == "update") =>
       Update(astParser(query), assignments.map(assignmentParser(_)))
     case q"$query.insert(..$assignments)" =>
       Insert(astParser(query), assignments.map(assignmentParser(_)))
@@ -1017,15 +996,17 @@ trait Parsing extends ValueComputation {
       // Verify that the idiom supports this type of returning clause
       idiomReturnCapability match {
         case ReturningMultipleFieldSupported | ReturningClauseSupported |
-            OutputClauseSupported =>
+          OutputClauseSupported =>
         case ReturningSingleFieldSupported =>
           c.fail(
             s"The 'returning' clause is not supported by the ${currentIdiom.getOrElse("specified")} idiom. Use 'returningGenerated' instead."
           )
         case ReturningNotSupported =>
           c.fail(
-            s"The 'returning' or 'returningGenerated' clauses are not supported by the ${currentIdiom
-              .getOrElse("specified")} idiom."
+            s"The 'returning' or 'returningGenerated' clauses are not supported by the ${
+              currentIdiom
+                .getOrElse("specified")
+            } idiom."
           )
       }
       // Verify that the AST in the returning-body is valid
@@ -1039,8 +1020,10 @@ trait Parsing extends ValueComputation {
       idiomReturnCapability match {
         case ReturningNotSupported =>
           c.fail(
-            s"The 'returning' or 'returningGenerated' clauses are not supported by the ${currentIdiom
-              .getOrElse("specified")} idiom."
+            s"The 'returning' or 'returningGenerated' clauses are not supported by the ${
+              currentIdiom
+                .getOrElse("specified")
+            } idiom."
           )
         case _ =>
       }
@@ -1048,8 +1031,7 @@ trait Parsing extends ValueComputation {
       idiomReturnCapability.verifyAst(bodyAst)
       ReturningGenerated(astParser(action), ident, bodyAst)
 
-    case q"$query.foreach[$t1, $t2](($alias) => $body)($f)"
-        if (is[CoreDsl#Query[Any]](query)) =>
+    case q"$query.foreach[$t1, $t2](($alias) => $body)($f)" if (is[CoreDsl#Query[Any]](query)) =>
       // If there are actions inside the subtree, we need to do some additional sanitizations
       // of the variables so that their content will not collide with code that we have generated.
       AvoidAliasConflict.sanitizeVariables(
@@ -1059,24 +1041,23 @@ trait Parsing extends ValueComputation {
   }
 
   /**
-    * In situations where the a `.returning` clause returns the initial record i.e. `.returning(r => r)`,
-    * we need to expand out the record into it's fields i.e. `.returning(r => (r.foo, r.bar))`
-    * otherwise the tokenizer would be force to pass `RETURNING *` to the SQL which is a problem
-    * because the fields inside of the record could arrive out of order in the result set
-    * (e.g. arrive as `r.bar, r.foo`). Use use the value/flatten methods in order to expand
-    * the case-class out into fields.
-    */
-  private def reprocessReturnClause(ident: Ident,
-                                    originalBody: Ast,
-                                    action: Tree) = {
+   * In situations where the a `.returning` clause returns the initial record i.e. `.returning(r => r)`,
+   * we need to expand out the record into it's fields i.e. `.returning(r => (r.foo, r.bar))`
+   * otherwise the tokenizer would be force to pass `RETURNING *` to the SQL which is a problem
+   * because the fields inside of the record could arrive out of order in the result set
+   * (e.g. arrive as `r.bar, r.foo`). Use use the value/flatten methods in order to expand
+   * the case-class out into fields.
+   */
+  private def reprocessReturnClause(
+    ident:        Ident,
+    originalBody: Ast,
+    action:       Tree
+  ) = {
     val actionType = typecheckUnquoted(action)
 
     (ident == originalBody, actionType.tpe) match {
       // Note, tuples are also case classes so this also matches for tuples
-      case (true, ClassTypeRefMatch(cls, List(arg)))
-          if (cls == asClass[QueryDsl#Insert[_]] || cls == asClass[
-            QueryDsl#Update[_]
-          ]) && isTypeCaseClass(arg) =>
+      case (true, ClassTypeRefMatch(cls, List(arg))) if (cls == asClass[QueryDsl#Insert[_]] || cls == asClass[QueryDsl#Update[_]]) && isTypeCaseClass(arg) =>
         val elements =
           flatten(q"${TermName(ident.name)}", value("Decoder", arg))
         if (elements.size == 0)
@@ -1108,11 +1089,11 @@ trait Parsing extends ValueComputation {
   }
 
   private val assignmentParser: Parser[Assignment] = Parser[Assignment] {
-    case q"((${identParser(i1)}) => $pack.Predef.ArrowAssoc[$t]($prop).$arrow[$v]($value))" =>
+    case q"((${ identParser(i1) }) => $pack.Predef.ArrowAssoc[$t]($prop).$arrow[$v]($value))" =>
       checkTypes(prop, value)
       Assignment(i1, astParser(prop), astParser(value))
 
-    case q"((${identParser(i1)}, ${identParser(i2)}) => $pack.Predef.ArrowAssoc[$t]($prop).$arrow[$v]($value))" =>
+    case q"((${ identParser(i1) }, ${ identParser(i2) }) => $pack.Predef.ArrowAssoc[$t]($prop).$arrow[$v]($value))" =>
       checkTypes(prop, value)
       val valueAst = Transform(astParser(value)) {
         case `i1` => OnConflict.Existing(i1)
@@ -1167,15 +1148,15 @@ trait Parsing extends ValueComputation {
   case object ForbidInnerCompare extends OptionCheckBehavior
 
   /**
-    * Type-check two trees, if one of them has optionals, go into the optionals to find the root types
-    * in each of them. Then compare the types that are inside. If they are not compareable, abort the build.
-    * Otherwise return type of which side (or both) has the optional. In order to do the actual comparison,
-    * the 'weak conformance' operator is used and a subclass is allowed on either side of the `==`. Weak
-    * conformance is necessary so that Longs can be compared to Ints etc...
-    */
+   * Type-check two trees, if one of them has optionals, go into the optionals to find the root types
+   * in each of them. Then compare the types that are inside. If they are not compareable, abort the build.
+   * Otherwise return type of which side (or both) has the optional. In order to do the actual comparison,
+   * the 'weak conformance' operator is used and a subclass is allowed on either side of the `==`. Weak
+   * conformance is necessary so that Longs can be compared to Ints etc...
+   */
   private def checkInnerTypes(
-    lhs: Tree,
-    rhs: Tree,
+    lhs:                 Tree,
+    rhs:                 Tree,
     optionCheckBehavior: OptionCheckBehavior
   ): (Boolean, Boolean) = {
     val leftType = typecheckUnquoted(lhs).tpe
@@ -1189,8 +1170,7 @@ trait Parsing extends ValueComputation {
     optionCheckBehavior match {
       case AllowInnerCompare if typesMatch =>
         (leftIsOptional, rightIsOptional)
-      case ForbidInnerCompare
-          if ((leftIsOptional && rightIsOptional) || (!leftIsOptional && !rightIsOptional)) && typesMatch =>
+      case ForbidInnerCompare if ((leftIsOptional && rightIsOptional) || (!leftIsOptional && !rightIsOptional)) && typesMatch =>
         (leftIsOptional, rightIsOptional)
       case _ =>
         if (leftIsOptional || rightIsOptional)
@@ -1208,9 +1188,9 @@ trait Parsing extends ValueComputation {
 
   private def matchTypes(rightInner: Type, leftInner: Type): Boolean = {
     (rightInner.`weak_<:<`(leftInner) ||
-    rightInner.widen.`weak_<:<`(leftInner.widen) ||
-    leftInner.`weak_<:<`(rightInner) ||
-    leftInner.widen.`weak_<:<`(rightInner.widen))
+      rightInner.widen.`weak_<:<`(leftInner.widen) ||
+      leftInner.`weak_<:<`(rightInner) ||
+      leftInner.widen.`weak_<:<`(rightInner.widen))
   }
 
   private def typecheckUnquoted(tree: Tree): Tree = {
