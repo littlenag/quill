@@ -16,7 +16,7 @@ trait Liftables {
     _
   }
 
-  private val pack = q"io.getquill.ast"
+  private val pack = q"io.spill.ast"
 
   implicit val astLiftable: Liftable[Ast] = Liftable[Ast] {
     case ast: Query               => queryLiftable(ast)

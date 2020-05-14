@@ -74,7 +74,7 @@ class MetaDslMacro(val c: MacroContext) extends ValueComputation {
     val elements = flatten(q"x", value)
     if (elements.isEmpty)
       c.fail(s"Case class type ${t.tpe} has no values")
-    q"${c.prefix}.quote((q: ${c.prefix}.Query[$t]) => q.map(x => io.getquill.dsl.UnlimitedTuple(..$elements)))"
+    q"${c.prefix}.quote((q: ${c.prefix}.Query[$t]) => q.map(x => io.spill.dsl.UnlimitedTuple(..$elements)))"
   }
 
   private def extract[T](value: Value)(implicit t: WeakTypeTag[T]): Tree = {

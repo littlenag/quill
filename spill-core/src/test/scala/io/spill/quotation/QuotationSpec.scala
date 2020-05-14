@@ -2179,7 +2179,7 @@ class QuotationSpec extends Spec {
           import implicits._
           val q = quote(query[TestEntity].toRandom)
           val l =
-            q.liftings.`implicits.ToRadom(null.asInstanceOf[io.getquill.testContext.EntityQuery[io.getquill.testContext.TestEntity]]).toRandom.Implicits.this.random`
+            q.liftings.`implicits.ToRadom(null.asInstanceOf[io.spill.testContext.EntityQuery[io.spill.testContext.TestEntity]]).toRandom.Implicits.this.random`
           l.value mustEqual 999
           l.encoder mustEqual intEncoder
         }

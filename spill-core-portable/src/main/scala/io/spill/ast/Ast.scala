@@ -26,7 +26,7 @@ sealed trait Ast {
     import io.spill.idiom.StatementInterpolator._
     implicit def externalTokenizer: Tokenizer[External] =
       Tokenizer[External](_ => stmt"?")
-    implicit val namingStrategy: NamingStrategy = io.getquill.Literal
+    implicit val namingStrategy: NamingStrategy = io.spill.Literal
     this.token.toString
   }
 }

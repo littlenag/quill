@@ -147,9 +147,9 @@ trait ReifyLiftings {
               for ((name, Reified(value, encoder)) <- transformer.state) yield {
                 encoder match {
                   case Some(encoder) =>
-                    q"val $name = io.getquill.quotation.ScalarValueLifting($value, $encoder)"
+                    q"val $name = io.spill.quotation.ScalarValueLifting($value, $encoder)"
                   case None =>
-                    q"val $name = io.getquill.quotation.CaseClassValueLifting($value)"
+                    q"val $name = io.spill.quotation.CaseClassValueLifting($value)"
                 }
               }
             (ast, q"val $liftings = new { ..$trees }")

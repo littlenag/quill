@@ -22,7 +22,7 @@ class QueryDslMacro(val c: MacroContext) {
 
   private def meta[T](prefix: String)(implicit t: WeakTypeTag[T]): Tree = {
     val expanderTpe = c.typecheck(
-      tq"io.getquill.dsl.MetaDsl#${TypeName(s"${prefix}Meta")}[$t]",
+      tq"io.spill.dsl.MetaDsl#${TypeName(s"${prefix}Meta")}[$t]",
       c.TYPEmode
     )
     c.inferImplicitValue(expanderTpe.tpe, silent = true) match {

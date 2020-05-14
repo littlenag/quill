@@ -4,8 +4,7 @@ import io.spill.NamingStrategy
 import scala.language.higherKinds
 import scala.language.experimental.macros
 
-trait StreamingContext[Idiom <: io.getquill.idiom.Idiom,
-                       Naming <: NamingStrategy] {
+trait StreamingContext[Idiom <: io.spill.idiom.Idiom, Naming <: NamingStrategy] {
   this: Context[Idiom, Naming] =>
 
   type StreamResult[T]

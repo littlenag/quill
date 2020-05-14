@@ -276,7 +276,7 @@ trait Parsing extends ValueComputation {
       Distinct(astParser(source))
 
     case q"$source.nested" if (is[CoreDsl#Query[Any]](source)) =>
-      io.getquill.ast.Nested(astParser(source))
+      io.spill.ast.Nested(astParser(source))
 
   }
 
@@ -374,7 +374,7 @@ trait Parsing extends ValueComputation {
         Dynamic {
           c.typecheck(q"""
             new ${c.prefix}.Quoted[Any] {
-              override def ast = io.getquill.ast.Infix($newParts, $newParams, $infixIsPure)
+              override def ast = io.spill.ast.Infix($newParts, $newParams, $infixIsPure)
             }
           """)
         }
@@ -851,8 +851,8 @@ trait Parsing extends ValueComputation {
     }
     case q"(($pack.Predef.ArrowAssoc[$t1]($v1).$arrow[$t2]($v2)))" =>
       Tuple(List(astParser(v1), astParser(v2)))
-    case q"io.getquill.dsl.UnlimitedTuple.apply($v)" => astParser(v)
-    case q"io.getquill.dsl.UnlimitedTuple.apply(..$v)" =>
+    case q"io.spill.dsl.UnlimitedTuple.apply($v)" => astParser(v)
+    case q"io.spill.dsl.UnlimitedTuple.apply(..$v)" =>
       Tuple(v.map(astParser(_)))
     case q"$ccCompanion(..$v)"
         if (
@@ -1085,7 +1085,7 @@ trait Parsing extends ValueComputation {
         // Create an intermediate scala API that can then be parsed into clauses. This needs to be
         // typechecked first in order to function properly.
         val tpe = c.typecheck(
-          q"((${TermName(ident.name)}:$arg) => io.getquill.dsl.UnlimitedTuple.apply(..$elements))"
+          q"((${TermName(ident.name)}:$arg) => io.spill.dsl.UnlimitedTuple.apply(..$elements))"
         )
         val newBody =
           tpe match {

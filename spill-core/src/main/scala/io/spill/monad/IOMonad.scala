@@ -19,8 +19,8 @@ object Effect {
 trait IOMonad {
   this: Context[_, _] =>
 
-  type Effect = io.getquill.monad.Effect
-  val Effect = io.getquill.monad.Effect
+  type Effect = io.spill.monad.Effect
+  val Effect = io.spill.monad.Effect
 
   protected case class FromTry[T](t: Try[T]) extends IO[T, Effect]
   protected case class Sequence[A, M[X] <: IterableOnce[X], E <: Effect](

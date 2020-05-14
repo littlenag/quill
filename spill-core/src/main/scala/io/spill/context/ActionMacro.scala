@@ -146,12 +146,12 @@ class ActionMacro(val c: MacroContext) extends ContextMacro with ReifyLiftings {
   private def returningColumn =
     q"""
       (expanded.ast match {
-        case ret: io.getquill.ast.ReturningAction =>
-            io.getquill.norm.ExpandReturning.applyMap(ret)(
-              (ast, statement) => io.getquill.context.Expand(${c.prefix}, ast, statement, idiom, naming).string
+        case ret: io.spill.ast.ReturningAction =>
+            io.spill.norm.ExpandReturning.applyMap(ret)(
+              (ast, statement) => io.spill.context.Expand(${c.prefix}, ast, statement, idiom, naming).string
             )(idiom, naming)
         case ast =>
-          io.getquill.util.Messages.fail(s"Can't find returning column. Ast: '$$ast'")
+          io.spill.util.Messages.fail(s"Can't find returning column. Ast: '$$ast'")
       })
     """
 

@@ -20,7 +20,7 @@ trait ContextMacro extends Quotation {
     q"""
       val (idiom, naming) = ${idiomAndNamingDynamic}
       val (ast, statement) = ${translate(ast)}
-      io.getquill.context.Expand(${c.prefix}, ast, statement, idiom, naming)
+      io.spill.context.Expand(${c.prefix}, ast, statement, idiom, naming)
     """
 
   protected def extractAst[T](quoted: Tree): Ast =
@@ -38,16 +38,16 @@ trait ContextMacro extends Quotation {
 
   private implicit val tokenLiftable: Liftable[Token] = Liftable[Token] {
     case ScalarTagToken(lift) =>
-      q"io.getquill.idiom.ScalarTagToken(${lift: Tag})"
+      q"io.spill.idiom.ScalarTagToken(${lift: Tag})"
     case QuotationTagToken(lift) =>
-      q"io.getquill.idiom.QuotationTagToken(${lift: Tag})"
-    case StringToken(string) => q"io.getquill.idiom.StringToken($string)"
+      q"io.spill.idiom.QuotationTagToken(${lift: Tag})"
+    case StringToken(string) => q"io.spill.idiom.StringToken($string)"
     case ScalarLiftToken(lift) =>
-      q"io.getquill.idiom.ScalarLiftToken(${lift: Lift})"
+      q"io.spill.idiom.ScalarLiftToken(${lift: Lift})"
     case Statement(tokens) =>
-      q"io.getquill.idiom.Statement(scala.List(..$tokens))"
+      q"io.spill.idiom.Statement(scala.List(..$tokens))"
     case SetContainsToken(a, op, b) =>
-      q"io.getquill.idiom.SetContainsToken($a, $op, $b)"
+      q"io.spill.idiom.SetContainsToken($a, $op, $b)"
   }
 
   private def translateStatic(ast: Ast): Tree = {

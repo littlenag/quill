@@ -2,7 +2,7 @@ package io.spill.monad
 
 class SyncIOMonadSpec extends IOMonadSpec {
 
-  override val ctx = io.getquill.testContext
+  override val ctx = io.spill.testContext
   import ctx._
 
   override def eval[T](io: IO[T, _]) =
