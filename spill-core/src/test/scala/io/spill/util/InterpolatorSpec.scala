@@ -1,6 +1,6 @@
 package io.spill.util
 
-import java.io.{ByteArrayOutputStream, PrintStream}
+import java.io.{ ByteArrayOutputStream, PrintStream }
 
 import io.spill.Spec
 import io.spill.util.Messages.TraceType.Standard
@@ -42,17 +42,19 @@ and bar $small""".generateString() mustEqual (("""small object:
         |""".stripMargin, 0))
   }
 
-  case class Large(id: Int,
-                   one: String,
-                   two: String,
-                   three: String,
-                   four: String,
-                   five: String,
-                   six: String,
-                   seven: String,
-                   eight: String,
-                   nine: String,
-                   ten: String)
+  case class Large(
+    id:    Int,
+    one:   String,
+    two:   String,
+    three: String,
+    four:  String,
+    five:  String,
+    six:   String,
+    seven: String,
+    eight: String,
+    nine:  String,
+    ten:   String
+  )
   val vars =
     (0 until 10).map(i => (0 until i).map(_ => "Test").mkString("")).toList
   val large = Large(

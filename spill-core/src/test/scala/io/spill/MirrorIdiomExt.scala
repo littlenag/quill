@@ -1,12 +1,13 @@
 package io.spill
 
-import io.spill.context.{CanReturnField, CanReturnMultiField, CannotReturn}
+import io.spill.context.{ CanReturnField, CanReturnMultiField, CannotReturn }
 
-class TestMirrorContextTemplate[Dialect <: MirrorIdiomBase,
-                                Naming <: NamingStrategy](dialect: Dialect,
-                                                          naming: Naming)
-    extends MirrorContext[Dialect, Naming](dialect, naming)
-    with TestEntities {
+class TestMirrorContextTemplate[Dialect <: MirrorIdiomBase, Naming <: NamingStrategy](
+  dialect: Dialect,
+  naming:  Naming
+)
+  extends MirrorContext[Dialect, Naming](dialect, naming)
+  with TestEntities {
 
   def withDialect[I <: MirrorIdiomBase](
     dialect: I

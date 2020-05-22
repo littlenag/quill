@@ -6,9 +6,9 @@ import io.spill.dsl.DynamicQueryDsl
 class DynamicQuerySpec extends Spec {
 
   object testContext
-      extends MirrorContext(MirrorIdiom, Literal)
-      with TestEntities
-      with DynamicQueryDsl
+    extends MirrorContext(MirrorIdiom, Literal)
+    with TestEntities
+    with DynamicQueryDsl
   import testContext._
 
   "implicit classes" - {
@@ -498,8 +498,10 @@ class DynamicQuerySpec extends Spec {
   }
 
   "entityQuery" - {
-    def test[T: QueryMeta](d: Quoted[EntityQuery[T]],
-                           s: Quoted[EntityQuery[T]]) =
+    def test[T: QueryMeta](
+      d: Quoted[EntityQuery[T]],
+      s: Quoted[EntityQuery[T]]
+    ) =
       testContext.run(d).string mustEqual testContext.run(s).string
 
     "filter" in {

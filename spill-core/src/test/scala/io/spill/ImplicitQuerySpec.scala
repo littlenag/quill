@@ -1,9 +1,9 @@
 package io.spill
 
 object iqContext
-    extends MirrorContext(MirrorIdiom, Literal)
-    with ImplicitQuery
-    with TestEntities
+  extends MirrorContext(MirrorIdiom, Literal)
+  with ImplicitQuery
+  with TestEntities
 
 object Test extends Function1[String, Test] {
   def apply(a: String) = new Test(a)

@@ -1,7 +1,7 @@
 package io.spill
 
 import io.spill.ast.Renameable.Fixed
-import io.spill.ast.{Entity, PropertyAlias}
+import io.spill.ast.{ Entity, PropertyAlias }
 import io.spill.context.mirror.Row
 
 class UnlimitedOptionalEmbeddedSpec extends Spec {

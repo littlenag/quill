@@ -13,8 +13,7 @@ class AstOpsSpec extends Spec {
     }
     "apply" in {
       (Ident("a") +||+ Constant(true)) must matchPattern {
-        case BinaryOperation(Ident(a), BooleanOperator.`||`, Constant(t))
-            if (a == "a" && t == true) =>
+        case BinaryOperation(Ident(a), BooleanOperator.`||`, Constant(t)) if (a == "a" && t == true) =>
       }
     }
   }
@@ -27,8 +26,7 @@ class AstOpsSpec extends Spec {
     }
     "apply" in {
       (Ident("a") +&&+ Constant(true)) must matchPattern {
-        case BinaryOperation(Ident(a), BooleanOperator.`&&`, Constant(t))
-            if (a == "a" && t == true) =>
+        case BinaryOperation(Ident(a), BooleanOperator.`&&`, Constant(t)) if (a == "a" && t == true) =>
       }
     }
   }
@@ -41,8 +39,7 @@ class AstOpsSpec extends Spec {
     }
     "apply" in {
       (Ident("a") +==+ Constant(true)) must matchPattern {
-        case BinaryOperation(Ident(a), EqualityOperator.`==`, Constant(t))
-            if (a == "a" && t == true) =>
+        case BinaryOperation(Ident(a), EqualityOperator.`==`, Constant(t)) if (a == "a" && t == true) =>
       }
     }
   }
@@ -50,8 +47,7 @@ class AstOpsSpec extends Spec {
   "exist" - {
     "apply" in {
       IsNotNullCheck(Ident("a")) must matchPattern {
-        case BinaryOperation(Ident(a), EqualityOperator.!=, NullValue)
-            if (a == "a") =>
+        case BinaryOperation(Ident(a), EqualityOperator.!=, NullValue) if (a == "a") =>
       }
     }
     "unapply" in {
@@ -64,8 +60,7 @@ class AstOpsSpec extends Spec {
   "empty" - {
     "apply" in {
       IsNullCheck(Ident("a")) must matchPattern {
-        case BinaryOperation(Ident(a), EqualityOperator.==, NullValue)
-            if (a == "a") =>
+        case BinaryOperation(Ident(a), EqualityOperator.==, NullValue) if (a == "a") =>
       }
     }
     "unapply" in {
@@ -79,10 +74,10 @@ class AstOpsSpec extends Spec {
     "apply" in {
       IfExist(Ident("a"), Ident("b"), Ident("c")) must matchPattern {
         case If(
-            BinaryOperation(Ident(a), EqualityOperator.!=, NullValue),
-            Ident(b),
-            Ident(c)
-            ) if (a == "a" && b == "b" && c == "c") =>
+          BinaryOperation(Ident(a), EqualityOperator.!=, NullValue),
+          Ident(b),
+          Ident(c)
+          ) if (a == "a" && b == "b" && c == "c") =>
       }
     }
     "unapply" in {
@@ -91,9 +86,8 @@ class AstOpsSpec extends Spec {
         Ident("b"),
         Ident("c")
       ) must matchPattern {
-        case IfExist(Ident(a), Ident(b), Ident(c))
-            if (a == "a" && b == "b" && c == "c") =>
-      }
+          case IfExist(Ident(a), Ident(b), Ident(c)) if (a == "a" && b == "b" && c == "c") =>
+        }
     }
   }
 
@@ -101,10 +95,10 @@ class AstOpsSpec extends Spec {
     "apply" in {
       IfExistElseNull(Ident("a"), Ident("b")) must matchPattern {
         case If(
-            BinaryOperation(Ident(a), EqualityOperator.!=, NullValue),
-            Ident(b),
-            NullValue
-            ) if (a == "a" && b == "b") =>
+          BinaryOperation(Ident(a), EqualityOperator.!=, NullValue),
+          Ident(b),
+          NullValue
+          ) if (a == "a" && b == "b") =>
       }
     }
     "unapply" in {
@@ -113,8 +107,8 @@ class AstOpsSpec extends Spec {
         Ident("b"),
         NullValue
       ) must matchPattern {
-        case IfExistElseNull(Ident(a), Ident(b)) if (a == "a" && b == "b") =>
-      }
+          case IfExistElseNull(Ident(a), Ident(b)) if (a == "a" && b == "b") =>
+        }
     }
   }
 

@@ -90,7 +90,7 @@ class QueryGenerator(seed: Int) {
 }
 
 case class IsAggregated(state: Boolean = false)
-    extends StatefulTransformer[Boolean] {
+  extends StatefulTransformer[Boolean] {
 
   override def apply(q: Query) =
     q match {

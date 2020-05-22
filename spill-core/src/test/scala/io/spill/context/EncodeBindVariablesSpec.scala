@@ -1,7 +1,7 @@
 package io.spill.context
 
 import io.spill.context.mirror.Row
-import io.spill.{Spec, testContext}
+import io.spill.{ Spec, testContext }
 import io.spill.testContext._
 
 class EncodeBindVariablesSpec extends Spec {

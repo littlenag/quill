@@ -12,7 +12,7 @@ class OpinionSpec extends Spec {
       Property
         .Opinionated(Ident("foo"), "bar", Fixed, Visible)
         .neutralize mustEqual (Property
-        .Opinionated(Ident("foo"), "bar", neutral, Visible))
+          .Opinionated(Ident("foo"), "bar", neutral, Visible))
     }
     "to renameable default when nested" in {
       Property
@@ -23,13 +23,13 @@ class OpinionSpec extends Spec {
           Visible
         )
         .neutralize mustEqual (
-        Property.Opinionated(
-          Property.Opinionated(Ident("foo"), "bar", neutral, Visible),
-          "baz",
-          neutral,
-          Visible
+          Property.Opinionated(
+            Property.Opinionated(Ident("foo"), "bar", neutral, Visible),
+            "baz",
+            neutral,
+            Visible
+          )
         )
-      )
     }
     "when inside other AST elements" in {
       Map(
@@ -37,12 +37,12 @@ class OpinionSpec extends Spec {
         Ident("v"),
         Property.Opinionated(Ident("v"), "prop", Fixed, Visible)
       ).neutralize mustEqual (
-        Map(
-          Property.Opinionated(Ident("foo"), "bar", neutral, Visible),
-          Ident("v"),
-          Property.Opinionated(Ident("v"), "prop", neutral, Visible)
+          Map(
+            Property.Opinionated(Ident("foo"), "bar", neutral, Visible),
+            Ident("v"),
+            Property.Opinionated(Ident("v"), "prop", neutral, Visible)
+          )
         )
-      )
     }
   }
 
@@ -59,8 +59,8 @@ class OpinionSpec extends Spec {
         Ident("v"),
         Property.Opinionated(Ident("v"), "prop", Fixed, Visible)
       ).neutralize mustEqual (
-        Map(Entity("foo", Nil), Ident("v"), Property(Ident("v"), "prop"))
-      )
+          Map(Entity("foo", Nil), Ident("v"), Property(Ident("v"), "prop"))
+        )
     }
   }
 }

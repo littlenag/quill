@@ -3,7 +3,7 @@ package io.spill.quotation
 import io.spill.Spec
 import io.spill.ast.Implicits._
 import io.spill.ast.Renameable.Fixed
-import io.spill.ast.{Query => _, _}
+import io.spill.ast.{ Query => _, _ }
 import io.spill.context.ValueClass
 import io.spill.norm.NormalizeStringConcat
 import io.spill.testContext._
@@ -1614,9 +1614,9 @@ class QuotationSpec extends Spec {
           }
           quote(unquote(q)).ast must matchPattern {
             case Function(
-                _,
-                Infix(List("", " || dyn"), List(Ident("a")), true)
-                ) =>
+              _,
+              Infix(List("", " || dyn"), List(Ident("a")), true)
+              ) =>
           }
         }
         "at the end" in {
@@ -1626,9 +1626,9 @@ class QuotationSpec extends Spec {
           }
           quote(unquote(q)).ast must matchPattern {
             case Function(
-                _,
-                Infix(List("", " || dyn"), List(Ident("a")), false)
-                ) =>
+              _,
+              Infix(List("", " || dyn"), List(Ident("a")), false)
+              ) =>
           }
         }
         "at the beginning - pure" in {
@@ -1638,9 +1638,9 @@ class QuotationSpec extends Spec {
           }
           quote(unquote(q)).ast must matchPattern {
             case Function(
-                _,
-                Infix(List("dyn || ", ""), List(Ident("b")), true)
-                ) =>
+              _,
+              Infix(List("dyn || ", ""), List(Ident("b")), true)
+              ) =>
           }
         }
         "at the beginning" in {
@@ -1650,9 +1650,9 @@ class QuotationSpec extends Spec {
           }
           quote(unquote(q)).ast must matchPattern {
             case Function(
-                _,
-                Infix(List("dyn || ", ""), List(Ident("b")), false)
-                ) =>
+              _,
+              Infix(List("dyn || ", ""), List(Ident("b")), false)
+              ) =>
           }
         }
         "only" in {
@@ -1909,13 +1909,13 @@ class QuotationSpec extends Spec {
         "scala to java" in {
           val q = quote {
             (a: Byte,
-             b: Short,
-             c: Char,
-             d: Int,
-             e: Long,
-             f: Float,
-             g: Double,
-             h: Boolean) =>
+            b: Short,
+            c: Char,
+            d: Int,
+            e: Long,
+            f: Float,
+            g: Double,
+            h: Boolean) =>
               (
                 a: java.lang.Byte,
                 b: java.lang.Short,
@@ -1936,13 +1936,13 @@ class QuotationSpec extends Spec {
         "java to scala" in {
           val q = quote {
             (a: java.lang.Byte,
-             b: java.lang.Short,
-             c: java.lang.Character,
-             d: java.lang.Integer,
-             e: java.lang.Long,
-             f: java.lang.Float,
-             g: java.lang.Double,
-             h: java.lang.Boolean) =>
+            b: java.lang.Short,
+            c: java.lang.Character,
+            d: java.lang.Integer,
+            e: java.lang.Long,
+            f: java.lang.Float,
+            g: java.lang.Double,
+            h: java.lang.Boolean) =>
               (
                 a: Byte,
                 b: Short,

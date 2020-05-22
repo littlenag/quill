@@ -1,8 +1,8 @@
 package io.spill.context
 
-import io.spill.context.mirror.{MirrorSession, Row}
+import io.spill.context.mirror.{ MirrorSession, Row }
 import io.spill.testContext._
-import io.spill.{Spec, testContext}
+import io.spill.{ Spec, testContext }
 
 class BindMacroSpec extends Spec {
 

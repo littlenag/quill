@@ -12,28 +12,30 @@ trait EncodingSpec extends Spec {
 
   import c._
 
-  case class EncodingTestEntity(v1: String,
-                                v2: BigDecimal,
-                                v3: Boolean,
-                                v4: Byte,
-                                v5: Short,
-                                v6: Int,
-                                v7: Long,
-                                v8: Float,
-                                v9: Double,
-                                v10: Array[Byte],
-                                v11: Date,
-                                o1: Option[String],
-                                o2: Option[BigDecimal],
-                                o3: Option[Boolean],
-                                o4: Option[Byte],
-                                o5: Option[Short],
-                                o6: Option[Int],
-                                o7: Option[Long],
-                                o8: Option[Float],
-                                o9: Option[Double],
-                                o10: Option[Array[Byte]],
-                                o11: Option[Date])
+  case class EncodingTestEntity(
+    v1:  String,
+    v2:  BigDecimal,
+    v3:  Boolean,
+    v4:  Byte,
+    v5:  Short,
+    v6:  Int,
+    v7:  Long,
+    v8:  Float,
+    v9:  Double,
+    v10: Array[Byte],
+    v11: Date,
+    o1:  Option[String],
+    o2:  Option[BigDecimal],
+    o3:  Option[Boolean],
+    o4:  Option[Byte],
+    o5:  Option[Short],
+    o6:  Option[Int],
+    o7:  Option[Long],
+    o8:  Option[Float],
+    o9:  Option[Double],
+    o10: Option[Array[Byte]],
+    o11: Option[Date]
+  )
 
   val delete = quote {
     query[EncodingTestEntity].delete
@@ -41,27 +43,27 @@ trait EncodingSpec extends Spec {
 
   val insert = quote {
     (v1: String,
-     v2: BigDecimal,
-     v3: Boolean,
-     v4: Byte,
-     v5: Short,
-     v6: Int,
-     v7: Long,
-     v8: Float,
-     v9: Double,
-     v10: Array[Byte],
-     v11: Date,
-     o1: Option[String],
-     o2: Option[BigDecimal],
-     o3: Option[Boolean],
-     o4: Option[Byte],
-     o5: Option[Short],
-     o6: Option[Int],
-     o7: Option[Long],
-     o8: Option[Float],
-     o9: Option[Double],
-     o10: Option[Array[Byte]],
-     o11: Option[Date]) =>
+    v2: BigDecimal,
+    v3: Boolean,
+    v4: Byte,
+    v5: Short,
+    v6: Int,
+    v7: Long,
+    v8: Float,
+    v9: Double,
+    v10: Array[Byte],
+    v11: Date,
+    o1: Option[String],
+    o2: Option[BigDecimal],
+    o3: Option[Boolean],
+    o4: Option[Byte],
+    o5: Option[Short],
+    o6: Option[Int],
+    o7: Option[Long],
+    o8: Option[Float],
+    o9: Option[Double],
+    o10: Option[Array[Byte]],
+    o11: Option[Date]) =>
       query[EncodingTestEntity].insert(
         _.v1 -> v1,
         _.v2 -> v2,
@@ -89,30 +91,7 @@ trait EncodingSpec extends Spec {
   }
 
   val insertValues =
-    List[
-      (String,
-       BigDecimal,
-       Boolean,
-       Byte,
-       Short,
-       Int,
-       Long,
-       Float,
-       Double,
-       Array[Byte],
-       java.util.Date,
-       Option[String],
-       Option[BigDecimal],
-       Option[Boolean],
-       Option[Byte],
-       Option[Short],
-       Option[Int],
-       Option[Long],
-       Option[Float],
-       Option[Double],
-       Option[Array[Byte]],
-       Option[java.util.Date])
-    ](
+    List[(String, BigDecimal, Boolean, Byte, Short, Int, Long, Float, Double, Array[Byte], java.util.Date, Option[String], Option[BigDecimal], Option[Boolean], Option[Byte], Option[Short], Option[Int], Option[Long], Option[Float], Option[Double], Option[Array[Byte]], Option[java.util.Date])](
       (
         "s",
         BigDecimal(1.1),

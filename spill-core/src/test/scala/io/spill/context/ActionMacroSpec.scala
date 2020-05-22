@@ -1,6 +1,6 @@
 package io.spill.context
 
-import io.spill.ReturnAction.{ReturnColumns, ReturnRecord}
+import io.spill.ReturnAction.{ ReturnColumns, ReturnRecord }
 import io.spill.context.mirror.Row
 import io.spill.testContext._
 import io.spill.{

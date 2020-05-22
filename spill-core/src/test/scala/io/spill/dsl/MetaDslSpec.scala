@@ -6,36 +6,38 @@ import io.spill.context.mirror.Row
 
 class MetaDslSpec extends Spec {
 
-  case class MoreThan22(v0: Int,
-                        v1: Int,
-                        v2: Int,
-                        v3: Int,
-                        v4: Int,
-                        v5: Int,
-                        v6: Int,
-                        v7: Int,
-                        v8: Int,
-                        v9: Int,
-                        x0: Int,
-                        x1: Int,
-                        x2: Int,
-                        x3: Int,
-                        x4: Int,
-                        x5: Int,
-                        x6: Int,
-                        x7: Int,
-                        x8: Int,
-                        x9: Int,
-                        y0: Int,
-                        y1: Int,
-                        y2: Int,
-                        y3: Int,
-                        y4: Int,
-                        y5: Int,
-                        y6: Int,
-                        y7: Int,
-                        y8: Int,
-                        y9: Int)
+  case class MoreThan22(
+    v0: Int,
+    v1: Int,
+    v2: Int,
+    v3: Int,
+    v4: Int,
+    v5: Int,
+    v6: Int,
+    v7: Int,
+    v8: Int,
+    v9: Int,
+    x0: Int,
+    x1: Int,
+    x2: Int,
+    x3: Int,
+    x4: Int,
+    x5: Int,
+    x6: Int,
+    x7: Int,
+    x8: Int,
+    x9: Int,
+    y0: Int,
+    y1: Int,
+    y2: Int,
+    y3: Int,
+    y4: Int,
+    y5: Int,
+    y6: Int,
+    y7: Int,
+    y8: Int,
+    y9: Int
+  )
 
   case class EmbValue(i: Int) extends Embedded
 
@@ -156,7 +158,7 @@ class MetaDslSpec extends Spec {
               c <- query[Contact] if c.personId == t.id
             } yield {
               (t.id, t.name, t.age, c.phone)
-          }
+            }
         )((Person.apply _).tupled)
 
       meta.expand.toString mustEqual """(q) => q.flatMap(t => querySchema("Contact").filter(c => c.personId == t.id).map(c => (t.id, t.name, t.age, c.phone)))"""

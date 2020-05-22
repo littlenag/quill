@@ -347,8 +347,8 @@ class ContextMacroSpec extends Spec {
   "supports composite naming strategies" - {
     "two" in {
       object ctx
-          extends MirrorContext(MirrorIdiom, NamingStrategy(Literal, Escape))
-          with TestEntities
+        extends MirrorContext(MirrorIdiom, NamingStrategy(Literal, Escape))
+        with TestEntities
       import ctx._
       ctx
         .run(query[TestEntity])
@@ -357,11 +357,11 @@ class ContextMacroSpec extends Spec {
     }
     "three" in {
       object ctx
-          extends MirrorContext(
-            MirrorIdiom,
-            NamingStrategy(Literal, Escape, UpperCase)
-          )
-          with TestEntities
+        extends MirrorContext(
+          MirrorIdiom,
+          NamingStrategy(Literal, Escape, UpperCase)
+        )
+        with TestEntities
       import ctx._
       ctx
         .run(query[TestEntity])
@@ -370,11 +370,11 @@ class ContextMacroSpec extends Spec {
     }
     "four" in {
       object ctx
-          extends MirrorContext(
-            MirrorIdiom,
-            NamingStrategy(Literal, Escape, UpperCase, SnakeCase)
-          )
-          with TestEntities
+        extends MirrorContext(
+          MirrorIdiom,
+          NamingStrategy(Literal, Escape, UpperCase, SnakeCase)
+        )
+        with TestEntities
       import ctx._
       ctx
         .run(query[TestEntity])

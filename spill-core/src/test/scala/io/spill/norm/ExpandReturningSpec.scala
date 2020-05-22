@@ -1,6 +1,6 @@
 package io.spill.norm
 
-import io.spill.ReturnAction.{ReturnColumns, ReturnRecord}
+import io.spill.ReturnAction.{ ReturnColumns, ReturnRecord }
 import io.spill._
 import io.spill.ast.Renameable.ByStrategy
 import io.spill.ast.Visibility.Visible
@@ -30,9 +30,9 @@ class ExpandReturningSpec extends Spec {
         )
       list must matchPattern {
         case List(
-            (Property(ExternalIdent("p"), "name"), _),
-            (Property(ExternalIdent("p"), "age"), _)
-            ) =>
+          (Property(ExternalIdent("p"), "name"), _),
+          (Property(ExternalIdent("p"), "age"), _)
+          ) =>
       }
     }
 
@@ -49,9 +49,9 @@ class ExpandReturningSpec extends Spec {
         )
       list must matchPattern {
         case List(
-            (Property(ExternalIdent("p"), "name"), _),
-            (Property(ExternalIdent("p"), "age"), _)
-            ) =>
+          (Property(ExternalIdent("p"), "name"), _),
+          (Property(ExternalIdent("p"), "age"), _)
+          ) =>
       }
     }
   }

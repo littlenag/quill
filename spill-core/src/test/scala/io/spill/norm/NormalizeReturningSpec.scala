@@ -1,6 +1,6 @@
 package io.spill.norm
 
-import io.spill.ReturnAction.{ReturnColumns, ReturnRecord}
+import io.spill.ReturnAction.{ ReturnColumns, ReturnRecord }
 import io.spill.context.mirror.Row
 import io.spill.{
   MirrorIdiomReturningSingle,

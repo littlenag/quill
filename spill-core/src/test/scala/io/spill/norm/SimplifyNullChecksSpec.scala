@@ -3,8 +3,8 @@ package io.spill.norm
 import io.spill.Spec
 import io.spill.ast._
 import io.spill.ast.Implicits._
-import io.spill.norm.EqualityBehavior.{AnsiEquality, NonAnsiEquality}
-import io.spill.testContext.{quote, unquote}
+import io.spill.norm.EqualityBehavior.{ AnsiEquality, NonAnsiEquality }
+import io.spill.testContext.{ quote, unquote }
 import io.spill.testContext.extras._
 
 class SimplifyNullChecksSpec extends Spec {
@@ -26,10 +26,10 @@ class SimplifyNullChecksSpec extends Spec {
       SimplifyNullChecksAnsi(
         IfExist(IfExistElseNull(ia, it), IfExistElseNull(ia, it), Ident("o"))
       ) mustEqual If(
-        IsNotNullCheck(Ident("a")) +&&+ IsNotNullCheck(Ident("t")),
-        Ident("t"),
-        Ident("o")
-      )
+          IsNotNullCheck(Ident("a")) +&&+ IsNotNullCheck(Ident("t")),
+          Ident("t"),
+          Ident("o")
+        )
     }
 
     "apply left rule" in {

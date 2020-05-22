@@ -5,7 +5,7 @@ import io.spill.ast._
 import io.spill.testContext._
 import io.spill.ast.NumericOperator
 import io.spill.ast.Implicits._
-import io.spill.norm.ConcatBehavior.{AnsiConcat, NonAnsiConcat}
+import io.spill.norm.ConcatBehavior.{ AnsiConcat, NonAnsiConcat }
 import io.spill.MoreAstOps._
 
 class FlattenOptionOperationSpec extends Spec {

@@ -2,7 +2,7 @@ package io.spill.dsl
 
 import io.spill.Spec
 import io.spill.context.mirror.Row
-import io.spill.quotation.{CaseClassValueLifting, ScalarValueLifting}
+import io.spill.quotation.{ CaseClassValueLifting, ScalarValueLifting }
 import io.spill.testContext._
 
 import scala.language.reflectiveCalls
