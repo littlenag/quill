@@ -17,29 +17,29 @@ trait TestEntities {
   case class TestEntityRegular(s: String, i: Long)
 
   val qr1 = quote {
-    query[TestEntity]
+    stream[TestEntity]
   }
   val qr1Emb = quote {
     querySchema[TestEntityEmb]("TestEntity")
   }
   val qr2 = quote {
-    query[TestEntity2]
+    stream[TestEntity2]
   }
   val qr3 = quote {
-    query[TestEntity3]
+    stream[TestEntity3]
   }
   val qr4 = quote {
-    query[TestEntity4]
+    stream[TestEntity4]
   }
   val qr5 = quote {
-    query[TestEntity5]
+    stream[TestEntity5]
   }
   val qr4Emb = quote {
     querySchema[TestEntity4Emb]("TestEntity4")
   }
   val qrRegular = quote {
     for {
-      a <- query[TestEntity]
+      a <- stream[TestEntity]
     } yield TestEntityRegular(a.s, a.l)
   }
 }

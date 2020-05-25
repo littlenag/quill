@@ -152,10 +152,10 @@ class MetaDslSpec extends Spec {
       case class Contact(personId: Int, phone: String)
       implicit val meta =
         queryMeta(
-          (q: Query[Person]) =>
+          (q: Stream[Person]) =>
             for {
               t <- q
-              c <- query[Contact] if c.personId == t.id
+              c <- stream[Contact] if c.personId == t.id
             } yield {
               (t.id, t.name, t.age, c.phone)
             }

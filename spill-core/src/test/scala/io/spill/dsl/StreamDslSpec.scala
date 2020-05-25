@@ -3,7 +3,7 @@ package io.spill.dsl
 import io.spill.testContext._
 import io.spill.Spec
 
-class QueryDslSpec extends Spec {
+class StreamDslSpec extends Spec {
 
   "expands inserts" - {
     "default meta" in {
@@ -23,7 +23,7 @@ class QueryDslSpec extends Spec {
     "custom meta" in {
       implicit val insertMeta = new InsertMeta[TestEntity] {
         override val expand = quote(
-          (q: EntityQuery[TestEntity], value: TestEntity) =>
+          (q: EntityStream[TestEntity], value: TestEntity) =>
             q.insert(v => v.i -> value.i)
         )
       }
@@ -55,7 +55,7 @@ class QueryDslSpec extends Spec {
     "custom meta" in {
       implicit val updateMeta = new UpdateMeta[TestEntity] {
         override val expand = quote(
-          (q: EntityQuery[TestEntity], value: TestEntity) =>
+          (q: EntityStream[TestEntity], value: TestEntity) =>
             q.update(v => v.i -> value.i)
         )
       }

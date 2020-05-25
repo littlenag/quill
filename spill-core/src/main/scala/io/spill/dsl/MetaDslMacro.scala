@@ -36,12 +36,6 @@ class MetaDslMacro(val c: MacroContext) extends ValueComputation {
       """
     }
 
-  def insertMeta[T](exclude: Tree*)(implicit t: WeakTypeTag[T]): Tree =
-    actionMeta[T](value("Encoder", t.tpe, exclude: _*), "insert")
-
-  def updateMeta[T](exclude: Tree*)(implicit t: WeakTypeTag[T]): Tree =
-    actionMeta[T](value("Encoder", t.tpe, exclude: _*), "update")
-
   def materializeQueryMeta[T](implicit t: WeakTypeTag[T]): Tree = {
     val value = this.value("Decoder", t.tpe)
     q"""
@@ -52,12 +46,6 @@ class MetaDslMacro(val c: MacroContext) extends ValueComputation {
       }
     """
   }
-
-  def materializeUpdateMeta[T](implicit t: WeakTypeTag[T]): Tree =
-    actionMeta[T](value("Encoder", t.tpe), "update")
-
-  def materializeInsertMeta[T](implicit t: WeakTypeTag[T]): Tree =
-    actionMeta[T](value("Encoder", t.tpe), "insert")
 
   def materializeSchemaMeta[T](implicit t: WeakTypeTag[T]): Tree =
     if (t.tpe.typeSymbol.isClass && t.tpe.typeSymbol.asClass.isCaseClass) {
@@ -129,29 +117,4 @@ class MetaDslMacro(val c: MacroContext) extends ValueComputation {
     q"(row: ${c.prefix}.ResultRow) => ${expand(value)}"
   }
 
-  private def actionMeta[T](
-    value:  Value,
-    method: String
-  )(implicit t: WeakTypeTag[T]) = {
-    val assignments =
-      flatten(q"v", value)
-        .zip(flatten(q"value", value))
-        .map {
-          case (vTree, valueTree) =>
-            q"(v: $t) => $vTree -> $valueTree"
-        }
-    c.untypecheck {
-      q"""
-        new ${c.prefix}.${TypeName(method.capitalize + "Meta")}[$t] {
-          private[this] val _expand =
-            ${c.prefix}.quote((q: ${c.prefix}.EntityQuery[$t], value: $t) => q.${
-        TermName(
-          method
-        )
-      }(..$assignments))
-          def expand = _expand
-        }
-      """
-    }
-  }
 }

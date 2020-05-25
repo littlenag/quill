@@ -13,7 +13,7 @@ trait SyncIOMonad extends IOMonad {
   type Result[T] = T
 
   def runIO[T](quoted: Quoted[T]): IO[RunQuerySingleResult[T], Effect.Read] = macro IOMonadMacro.runIO
-  def runIO[T](quoted: Quoted[Query[T]]): IO[RunQueryResult[T], Effect.Read] = macro IOMonadMacro.runIO
+  def runIO[T](quoted: Quoted[Stream[T]]): IO[RunQueryResult[T], Effect.Read] = macro IOMonadMacro.runIO
   def runIO(quoted: Quoted[Action[_]]): IO[RunActionResult, Effect.Write] = macro IOMonadMacro.runIO
   def runIO[T](
     quoted: Quoted[ActionReturning[_, T]]

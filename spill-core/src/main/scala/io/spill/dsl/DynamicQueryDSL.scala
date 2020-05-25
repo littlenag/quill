@@ -33,11 +33,11 @@ class DynamicQueryDslMacro(val c: MacroContext) {
 trait DynamicQueryDsl {
   dsl: CoreDsl =>
 
-  implicit class ToDynamicQuery[T](q: Quoted[Query[T]]) {
+  implicit class ToDynamicQuery[T](q: Quoted[Stream[T]]) {
     def dynamic: DynamicQuery[T] = DynamicQuery(q)
   }
 
-  implicit class ToDynamicEntityQuery[T](q: Quoted[EntityQuery[T]]) {
+  implicit class ToDynamicEntityQuery[T](q: Quoted[EntityStream[T]]) {
     def dynamic: DynamicEntityQuery[T] = DynamicEntityQuery(q)
   }
 
@@ -59,16 +59,16 @@ trait DynamicQueryDsl {
     def dynamic: DynamicActionReturning[T, U] = DynamicActionReturning(q)
   }
 
-  implicit def dynamicUnquote[T](d: DynamicQuery[T]): Query[T] = macro DynamicQueryDslMacro.dynamicUnquote
+  implicit def dynamicUnquote[T](d: DynamicQuery[T]): Stream[T] = macro DynamicQueryDslMacro.dynamicUnquote
 
-  implicit def toQuoted[T](q: DynamicQuery[T]): Quoted[Query[T]] = q.q
-  implicit def toQuoted[T](q: DynamicEntityQuery[T]): Quoted[EntityQuery[T]] =
+  implicit def toQuoted[T](q: DynamicQuery[T]): Quoted[Stream[T]] = q.q
+  implicit def toQuoted[T](q: DynamicEntityQuery[T]): Quoted[EntityStream[T]] =
     q.q
   implicit def toQuoted[T <: Action[_]](q: DynamicAction[T]): Quoted[T] = q.q
 
   def dynamicQuery[T](implicit t: ClassTag[T]): DynamicEntityQuery[T] =
     DynamicEntityQuery(
-      splice[EntityQuery[T]](
+      splice[EntityStream[T]](
         Entity(t.runtimeClass.getName.split('.').last.split('$').last, Nil)
       )
     )
@@ -139,7 +139,7 @@ trait DynamicQueryDsl {
         )
       }
     DynamicEntityQuery(
-      splice[EntityQuery[T]](Entity.Opinionated(entity, aliases.toList, Fixed))
+      splice[EntityStream[T]](Entity.Opinionated(entity, aliases.toList, Fixed))
     )
   }
 
@@ -153,7 +153,7 @@ trait DynamicQueryDsl {
   }
 
   private def dyn[T](ast: Ast): DynamicQuery[T] =
-    DynamicQuery[T](splice[Query[T]](ast))
+    DynamicQuery[T](splice[Stream[T]](ast))
 
   private def splice[T](a: Ast) =
     new Quoted[T] {
@@ -164,7 +164,7 @@ trait DynamicQueryDsl {
     splice[O](ScalarValueLift("o", o, enc))
 
   object DynamicQuery {
-    def apply[T](p: Quoted[Query[T]]) =
+    def apply[T](p: Quoted[Stream[T]]) =
       new DynamicQuery[T] {
         override def q = p
       }
@@ -172,7 +172,7 @@ trait DynamicQueryDsl {
 
   sealed trait DynamicQuery[+T] {
 
-    protected[spill] def q: Quoted[Query[T]]
+    protected[spill] def q: Quoted[Stream[T]]
 
     protected[this] def transform[U, V, R](
       f: Quoted[U] => Quoted[V],
@@ -199,7 +199,7 @@ trait DynamicQueryDsl {
     def map[R](f: Quoted[T] => Quoted[R]): DynamicQuery[R] =
       transform(f, Map)
 
-    def flatMap[R](f: Quoted[T] => Quoted[Query[R]]): DynamicQuery[R] =
+    def flatMap[R](f: Quoted[T] => Quoted[Stream[R]]): DynamicQuery[R] =
       transform(f, FlatMap)
 
     def filter(f: Quoted[T] => Quoted[Boolean]): DynamicQuery[T] =
@@ -253,16 +253,16 @@ trait DynamicQueryDsl {
         case None    => this
       }
 
-    def ++[U >: T](q2: Quoted[Query[U]]): DynamicQuery[U] =
+    def ++[U >: T](q2: Quoted[Stream[U]]): DynamicQuery[U] =
       dyn(UnionAll(q.ast, q2.ast))
 
-    def unionAll[U >: T](q2: Quoted[Query[U]]): DynamicQuery[U] =
+    def unionAll[U >: T](q2: Quoted[Stream[U]]): DynamicQuery[U] =
       dyn(UnionAll(q.ast, q2.ast))
 
-    def union[U >: T](q2: Quoted[Query[U]]): DynamicQuery[U] =
+    def union[U >: T](q2: Quoted[Stream[U]]): DynamicQuery[U] =
       dyn(Union(q.ast, q2.ast))
 
-    def groupBy[R](f: Quoted[T] => Quoted[R]): DynamicQuery[(R, Query[T])] =
+    def groupBy[R](f: Quoted[T] => Quoted[R]): DynamicQuery[(R, Stream[T])] =
       transform(f, GroupBy)
 
     private def aggregate(op: AggregationOperator) =
@@ -283,21 +283,21 @@ trait DynamicQueryDsl {
     def size: Quoted[Long] =
       aggregate(AggregationOperator.size)
 
-    def join[A >: T, B](q2: Quoted[Query[B]]): DynamicJoinQuery[A, B, (A, B)] =
+    def join[A >: T, B](q2: Quoted[Stream[B]]): DynamicJoinQuery[A, B, (A, B)] =
       DynamicJoinQuery(InnerJoin, q, q2)
 
     def leftJoin[A >: T, B](
-      q2: Quoted[Query[B]]
+      q2: Quoted[Stream[B]]
     ): DynamicJoinQuery[A, B, (A, Option[B])] =
       DynamicJoinQuery(LeftJoin, q, q2)
 
     def rightJoin[A >: T, B](
-      q2: Quoted[Query[B]]
+      q2: Quoted[Stream[B]]
     ): DynamicJoinQuery[A, B, (Option[A], B)] =
       DynamicJoinQuery(RightJoin, q, q2)
 
     def fullJoin[A >: T, B](
-      q2: Quoted[Query[B]]
+      q2: Quoted[Stream[B]]
     ): DynamicJoinQuery[A, B, (Option[A], Option[B])] =
       DynamicJoinQuery(FullJoin, q, q2)
 
@@ -344,9 +344,9 @@ trait DynamicQueryDsl {
   }
 
   case class DynamicJoinQuery[A, B, R](
-    tpe: JoinType,
-    q1:  Quoted[Query[A]],
-    q2:  Quoted[Query[B]]
+                                        tpe: JoinType,
+                                        q1:  Quoted[Stream[A]],
+                                        q2:  Quoted[Stream[B]]
   ) {
     def on(f: (Quoted[A], Quoted[B]) => Quoted[Boolean]): DynamicQuery[R] = {
       withFreshIdent { iA =>
@@ -357,11 +357,11 @@ trait DynamicQueryDsl {
     }
   }
 
-  case class DynamicEntityQuery[T](q: Quoted[EntityQuery[T]])
+  case class DynamicEntityQuery[T](q: Quoted[EntityStream[T]])
     extends DynamicQuery[T] {
 
     private[this] def dyn[R](ast: Ast) =
-      DynamicEntityQuery(splice[EntityQuery[R]](ast))
+      DynamicEntityQuery(splice[EntityStream[R]](ast))
 
     override def filter(
       f: Quoted[T] => Quoted[Boolean]

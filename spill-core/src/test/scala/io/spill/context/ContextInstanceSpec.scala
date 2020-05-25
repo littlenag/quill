@@ -20,7 +20,7 @@ class ContextInstanceSpec extends Spec {
       "encoding" in {
         implicit val testToString = MappedEncoding[StringValue, String](_.s)
         val q = quote {
-          query[Entity].insert(_.s -> lift(StringValue("s")))
+          stream[Entity].insert(_.s -> lift(StringValue("s")))
         }
         testContext.run(q).prepareRow mustEqual Row("s")
       }
@@ -29,7 +29,7 @@ class ContextInstanceSpec extends Spec {
         implicit val stringToTest =
           MappedEncoding[String, StringValue](StringValue)
         val q = quote {
-          query[Entity]
+          stream[Entity]
         }
         testContext.run(q).extractor(Row("s")) mustEqual Entity(
           StringValue("s")
@@ -41,7 +41,7 @@ class ContextInstanceSpec extends Spec {
       "encoding" in {
         implicit val testToString = MappedEncoding[StringValue, String](_.s)
         val q = quote {
-          query[Entity].insert(_.s -> lift(StringValue("s")))
+          stream[Entity].insert(_.s -> lift(StringValue("s")))
         }
         testContext.run(q).prepareRow mustEqual Row("s")
       }
@@ -50,7 +50,7 @@ class ContextInstanceSpec extends Spec {
         implicit val stringToTest =
           MappedEncoding[String, StringValue](StringValue)
         val q = quote {
-          query[Entity]
+          stream[Entity]
         }
         testContext.run(q).extractor(Row("s")) mustEqual Entity(
           StringValue("s")
@@ -62,7 +62,7 @@ class ContextInstanceSpec extends Spec {
   "encoding set" in {
     case class Entity(i: Int)
     val q = quote {
-      query[Entity].filter(e => liftQuery(Set(1)).contains(e.i))
+      stream[Entity].filter(e => liftQuery(Set(1)).contains(e.i))
     }
     testContext.run(q).prepareRow mustEqual Row(1)
   }
@@ -72,14 +72,14 @@ class ContextInstanceSpec extends Spec {
 
     "encoding" in {
       val q = quote {
-        query[Entity].insert(_.x -> lift(ValueClass(1)), _.s -> "string")
+        stream[Entity].insert(_.x -> lift(ValueClass(1)), _.s -> "string")
       }
       testContext.run(q).prepareRow mustEqual Row(1)
     }
 
     "decoding" in {
       val q = quote {
-        query[Entity]
+        stream[Entity]
       }
       val v = ValueClass(1)
       testContext.run(q).extractor(Row(1, "1")) mustEqual Entity(v, "1")
@@ -91,14 +91,14 @@ class ContextInstanceSpec extends Spec {
 
     "encoding" in {
       val q = quote {
-        query[Entity].insert(_.x -> lift(GenericValueClass(1)), _.s -> "string")
+        stream[Entity].insert(_.x -> lift(GenericValueClass(1)), _.s -> "string")
       }
       testContext.run(q).prepareRow mustEqual Row(1)
     }
 
     "decoding" in {
       val q = quote {
-        query[Entity]
+        stream[Entity]
       }
       val v = GenericValueClass(1)
       testContext.run(q).extractor(Row(1, "1")) mustEqual Entity(v, "1")

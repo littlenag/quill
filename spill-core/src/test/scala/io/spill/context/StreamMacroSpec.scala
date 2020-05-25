@@ -5,7 +5,7 @@ import io.spill.context.mirror.Row
 import io.spill.testContext
 import io.spill.testContext._
 
-class QueryMacroSpec extends Spec {
+class StreamMacroSpec extends Spec {
 
   "runs query with nested optional case class" in {
     val q = quote {

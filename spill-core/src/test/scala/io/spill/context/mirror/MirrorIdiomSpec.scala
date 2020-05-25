@@ -35,9 +35,9 @@ class MirrorIdiomSpec extends Spec {
   "shows queries" - {
     "complex" in {
       val q = quote {
-        query[TestEntity]
+        stream[TestEntity]
           .filter(t => t.s == "test")
-          .flatMap(t => query[TestEntity])
+          .flatMap(t => stream[TestEntity])
           .drop(9)
           .take(10)
           .map(t => t)
@@ -172,14 +172,14 @@ class MirrorIdiomSpec extends Spec {
 
   "shows operations" - {
     "unary" in {
-      val q = quote { (xs: testContext.Query[_]) =>
+      val q = quote { (xs: testContext.Stream[_]) =>
         !xs.nonEmpty
       }
       stmt"${(q.ast: Ast).token}" mustEqual
         stmt"""(xs) => !xs.nonEmpty"""
     }
     "binary" in {
-      val q = quote { (xs: testContext.Query[_]) =>
+      val q = quote { (xs: testContext.Stream[_]) =>
         xs.nonEmpty && xs != null
       }
       stmt"${(q.ast: Ast).token}" mustEqual
@@ -253,14 +253,14 @@ class MirrorIdiomSpec extends Spec {
     }
     "prostfix" - {
       "isEmpty" in {
-        val q = quote { (xs: testContext.Query[_]) =>
+        val q = quote { (xs: testContext.Stream[_]) =>
           xs.isEmpty
         }
         stmt"${(q.ast: Ast).token}" mustEqual
           stmt"""(xs) => xs.isEmpty"""
       }
       "nonEmpty" in {
-        val q = quote { (xs: testContext.Query[_]) =>
+        val q = quote { (xs: testContext.Stream[_]) =>
           xs.nonEmpty
         }
         stmt"${(q.ast: Ast).token}" mustEqual
@@ -422,7 +422,7 @@ class MirrorIdiomSpec extends Spec {
   "shows actions" - {
     "update" in {
       val q = quote {
-        query[TestEntity].filter(t => t.s == "test").update(t => t.s -> "a")
+        stream[TestEntity].filter(t => t.s == "test").update(t => t.s -> "a")
       }
       stmt"${(q.ast: Ast).token}" mustEqual
         stmt"""querySchema("TestEntity").filter(t => t.s == "test").update(t => t.s -> "a")"""
@@ -430,7 +430,7 @@ class MirrorIdiomSpec extends Spec {
     "insert" - {
       "normal" in {
         val q = quote {
-          query[TestEntity].insert(t => t.s -> "a")
+          stream[TestEntity].insert(t => t.s -> "a")
         }
         stmt"${(q.ast: Ast).token}" mustEqual
           stmt"""querySchema("TestEntity").insert(t => t.s -> "a")"""
@@ -438,7 +438,7 @@ class MirrorIdiomSpec extends Spec {
 
       "returning" in {
         val q = quote {
-          query[TestEntity].insert(t => t.s -> "a").returning(t => t.l)
+          stream[TestEntity].insert(t => t.s -> "a").returning(t => t.l)
         }
         stmt"${(q.ast: Ast).token}" mustEqual
           stmt"""querySchema("TestEntity").insert(t => t.s -> "a").returning((t) => t.l)"""
@@ -447,7 +447,7 @@ class MirrorIdiomSpec extends Spec {
 
     "delete" in {
       val q = quote {
-        query[TestEntity].delete
+        stream[TestEntity].delete
       }
       stmt"${(q.ast: Ast).token}" mustEqual
         stmt"""querySchema("TestEntity").delete"""
@@ -455,7 +455,7 @@ class MirrorIdiomSpec extends Spec {
 
     "onConflict" - {
       val i = quote {
-        query[TestEntity].insert(t => t.s -> "a")
+        stream[TestEntity].insert(t => t.s -> "a")
       }
       val t = stmt"""querySchema("TestEntity").insert(t => t.s -> "a")"""
       "onConflictIgnore" in {
@@ -493,8 +493,8 @@ class MirrorIdiomSpec extends Spec {
         stmt"""querySchema("TestEntity").filter(t => infix"$${t.s} == 's'")"""
     }
     "as quoted" in {
-      implicit class RichQuoted[T](q: Quoted[testContext.Query[T]]) {
-        def func = quote(infix"$q.func".as[testContext.Query[T]])
+      implicit class RichQuoted[T](q: Quoted[testContext.Stream[T]]) {
+        def func = quote(infix"$q.func".as[testContext.Stream[T]])
       }
       val q = quote {
         qr1.func
@@ -680,7 +680,7 @@ class MirrorIdiomSpec extends Spec {
 
   "shows distinct" in {
     val q = quote {
-      query[TestEntity].distinct
+      stream[TestEntity].distinct
     }
     stmt"${(q.ast: Ast).token}" mustEqual
       stmt"""querySchema("TestEntity").distinct"""
@@ -688,7 +688,7 @@ class MirrorIdiomSpec extends Spec {
 
   "shows nested" in {
     val q = quote {
-      query[TestEntity].nested
+      stream[TestEntity].nested
     }
     stmt"${(q.ast: Ast).token}" mustEqual
       stmt"""querySchema("TestEntity").nested"""

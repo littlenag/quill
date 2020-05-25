@@ -1,6 +1,6 @@
 package io.spill
 
-class QueryProbingSpec extends Spec {
+class StreamProbingSpec extends Spec {
 
   "fails if the context can't be resolved at compile time" in {
     object c

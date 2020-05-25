@@ -180,7 +180,7 @@ class AvoidAliasConflictSpec extends Spec {
 
   "considers infix as unaliased" in {
     val i = quote {
-      infix"$qr1".as[Query[TestEntity]]
+      infix"$qr1".as[Stream[TestEntity]]
     }
     val q = quote {
       i.flatMap(a => qr2.flatMap(a => qr3))

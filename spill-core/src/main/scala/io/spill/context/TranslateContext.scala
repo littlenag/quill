@@ -29,7 +29,7 @@ trait TranslateContextBase {
   import translateEffect._
 
   def translate[T](quoted: Quoted[T]): TranslateResult[String] = macro QueryMacro.translateQuery[T]
-  def translate[T](quoted: Quoted[Query[T]]): TranslateResult[String] = macro QueryMacro.translateQuery[T]
+  def translate[T](quoted: Quoted[Stream[T]]): TranslateResult[String] = macro QueryMacro.translateQuery[T]
   def translate(quoted: Quoted[Action[_]]): TranslateResult[String] = macro ActionMacro.translateQuery
   def translate(
     quoted: Quoted[BatchAction[Action[_]]]
@@ -40,8 +40,8 @@ trait TranslateContextBase {
     prettyPrint: Boolean
   ): TranslateResult[String] = macro QueryMacro.translateQueryPrettyPrint[T]
   def translate[T](
-    quoted:      Quoted[Query[T]],
-    prettyPrint: Boolean
+                    quoted:      Quoted[Stream[T]],
+                    prettyPrint: Boolean
   ): TranslateResult[String] = macro QueryMacro.translateQueryPrettyPrint[T]
   def translate(
     quoted:      Quoted[Action[_]],

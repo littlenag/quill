@@ -11,7 +11,7 @@ class RebindSpec extends Spec {
       def returnId = quote(infix"$action RETURNING ID".as[Action[T]])
     }
     val q = quote {
-      query[TestEntity].insert(e => e.i -> lift(1)).returnId
+      stream[TestEntity].insert(e => e.i -> lift(1)).returnId
     }
     testContext
       .run(q)
@@ -27,7 +27,7 @@ class RebindSpec extends Spec {
     }
 
     case class A(date: Option[Long] = None)
-    testContext.run(query[A].filter(a => a.date.valid)).string mustEqual
+    testContext.run(stream[A].filter(a => a.date.valid)).string mustEqual
       s"""querySchema("A").filter(a => infix"($${a.date} IS NULL OR $${a.date} > $${?})").map(a => a.date)"""
   }
 
@@ -37,7 +37,7 @@ class RebindSpec extends Spec {
         def plus[T](delta: T) = quote(infix"$field + $delta".as[T])
       }
 
-      val q = quote(query[TestEntity].map(e => unquote(e.i.plus(10))))
+      val q = quote(stream[TestEntity].map(e => unquote(e.i.plus(10))))
       testContext
         .run(q)
         .string mustEqual s"""querySchema("TestEntity").map(e => infix"$${e.i} + $${10}")"""
@@ -48,7 +48,7 @@ class RebindSpec extends Spec {
         def plus(delta: Int) = quote(infix"$field + $delta".as[Long])
       }
 
-      val q = quote(query[TestEntity].map(e => unquote(e.i.plus(10))))
+      val q = quote(stream[TestEntity].map(e => unquote(e.i.plus(10))))
       testContext
         .run(q)
         .string mustEqual s"""querySchema("TestEntity").map(e => infix"$${e.i} + $${10}")"""

@@ -42,16 +42,16 @@ trait EncodingDsl extends LowPriorityImplicits {
 
   /* ************************************************************************** */
 
-  def liftQuery[U[_] <: Iterable[_], T](v: U[T]): Query[T] = macro EncodingDslMacro.liftQuery[T]
+  def liftQuery[U[_] <: Iterable[_], T](v: U[T]): Stream[T] = macro EncodingDslMacro.liftQuery[T]
 
   @compileTimeOnly(NonQuotedException.message)
   def liftQueryScalar[U[_] <: Iterable[_], T](v: U[T])(
     implicit
     e: Encoder[T]
-  ): Query[T] = NonQuotedException()
+  ): Stream[T] = NonQuotedException()
 
   @compileTimeOnly(NonQuotedException.message)
-  def liftQueryCaseClass[U[_] <: Iterable[_], T](v: U[T]): Query[T] =
+  def liftQueryCaseClass[U[_] <: Iterable[_], T](v: U[T]): Stream[T] =
     NonQuotedException()
 
   /* ************************************************************************** */

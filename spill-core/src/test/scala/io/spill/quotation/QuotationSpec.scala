@@ -625,7 +625,7 @@ class QuotationSpec extends Spec {
         "batch with Quoted[Action[T]]" in {
           case class TestEntity(id: Int)
           val list = List(TestEntity(1), TestEntity(2))
-          val insert = quote((row: TestEntity) => query[TestEntity].insert(row))
+          val insert = quote((row: TestEntity) => stream[TestEntity].insert(row))
           val q = quote(liftQuery(list).foreach(row => quote(insert(row))))
           quote(unquote(q)).ast mustEqual
             Foreach(
@@ -750,7 +750,7 @@ class QuotationSpec extends Spec {
         quote(unquote(q)).ast mustEqual Function(List(Ident("s")), Ident("s"))
       }
       "with type parameter" in {
-        def q[T] = quote { (q: Query[T]) =>
+        def q[T] = quote { (q: Stream[T]) =>
           q
         }
         IsDynamic(q.ast) mustEqual false
@@ -1448,7 +1448,7 @@ class QuotationSpec extends Spec {
       }
       "contains" - {
         "query" in {
-          val q = quote { (a: Query[TestEntity], b: TestEntity) =>
+          val q = quote { (a: Stream[TestEntity], b: TestEntity) =>
             a.contains(b)
           }
           quote(unquote(q)).ast.body mustEqual BinaryOperation(
@@ -1459,19 +1459,19 @@ class QuotationSpec extends Spec {
         }
         "within option operation" - {
           "forall" in {
-            val q = quote { (a: Query[Int], b: Option[Int]) =>
+            val q = quote { (a: Stream[Int], b: Option[Int]) =>
               b.forall(a.contains)
             }
             quote(unquote(q)).ast.body mustBe an[OptionOperation]
           }
           "exists" in {
-            val q = quote { (a: Query[Int], b: Option[Int]) =>
+            val q = quote { (a: Stream[Int], b: Option[Int]) =>
               b.exists(a.contains)
             }
             quote(unquote(q)).ast.body mustBe an[OptionOperation]
           }
           "map" in {
-            val q = quote { (a: Query[Int], b: Option[Int]) =>
+            val q = quote { (a: Stream[Int], b: Option[Int]) =>
               b.map(a.contains)
             }
             quote(unquote(q)).ast.body mustBe an[OptionOperation]
@@ -2014,12 +2014,12 @@ class QuotationSpec extends Spec {
       }
       "type param" - {
         "simple" in {
-          def test[T: SchemaMeta] = quote(query[T])
+          def test[T: SchemaMeta] = quote(stream[T])
 
           test[TestEntity].ast mustEqual Entity("TestEntity", Nil)
         }
         "nested" in {
-          def test[T: SchemaMeta] = quote(query[T].map(t => 1))
+          def test[T: SchemaMeta] = quote(stream[T].map(t => 1))
           test[TestEntity].ast mustEqual Map(
             Entity("TestEntity", Nil),
             Ident("t"),
@@ -2171,13 +2171,13 @@ class QuotationSpec extends Spec {
         "query" in {
           trait Implicits {
             var random = 999
-            implicit class ToRadom(q: Query[TestEntity]) {
+            implicit class ToRadom(q: Stream[TestEntity]) {
               def toRandom = quote(q.map(_ => lift(random)))
             }
           }
           object implicits extends Implicits
           import implicits._
-          val q = quote(query[TestEntity].toRandom)
+          val q = quote(stream[TestEntity].toRandom)
           val l =
             q.liftings.`implicits.ToRadom(null.asInstanceOf[io.spill.testContext.EntityQuery[io.spill.testContext.TestEntity]]).toRandom.Implicits.this.random`
           l.value mustEqual 999
@@ -2189,7 +2189,7 @@ class QuotationSpec extends Spec {
         case class TestEntity(embedded: EmbeddedTestEntity)
         val t = TestEntity(EmbeddedTestEntity("test"))
         val q = quote {
-          query[TestEntity].insert(lift(t))
+          stream[TestEntity].insert(lift(t))
         }
         q.liftings.`t.embedded.id`.value mustEqual t.embedded.id
         val q2 = quote(q)
@@ -2219,7 +2219,7 @@ class QuotationSpec extends Spec {
         }
         "action" in {
           val q = quote {
-            query[TestEntity].insert(lift(t))
+            stream[TestEntity].insert(lift(t))
           }
           val l1 = q.liftings.`t.s`
           l1.value mustEqual t.s
@@ -2237,7 +2237,7 @@ class QuotationSpec extends Spec {
         }
         "action + beta reduction" in {
           val n = quote { (t: TestEntity) =>
-            query[TestEntity].update(t)
+            stream[TestEntity].update(t)
           }
           val q = quote {
             n(lift(t))
@@ -2334,32 +2334,32 @@ class QuotationSpec extends Spec {
 
   "supports implicit quotations" - {
     "implicit class" in {
-      implicit class ForUpdate[T](q: Query[T]) {
+      implicit class ForUpdate[T](q: Stream[T]) {
         def forUpdate = quote(infix"$q FOR UPDATE")
       }
 
       val q = quote {
-        query[TestEntity].forUpdate
+        stream[TestEntity].forUpdate
       }
       val n = quote {
-        infix"${query[TestEntity]} FOR UPDATE"
+        infix"${stream[TestEntity]} FOR UPDATE"
       }
       quote(unquote(q)).ast mustEqual n.ast
     }
   }
 
   "with additional param" in {
-    implicit class GreaterThan[T](q: Query[Int]) {
+    implicit class GreaterThan[T](q: Stream[Int]) {
       def greaterThan(j: Int) = quote(q.filter(i => i > j))
     }
 
     val j = 1
     val q = quote {
-      query[TestEntity].map(t => t.i).greaterThan(j)
+      stream[TestEntity].map(t => t.i).greaterThan(j)
     }
 
     val n = quote {
-      query[TestEntity].map(t => t.i).filter(i => i > j)
+      stream[TestEntity].map(t => t.i).filter(i => i > j)
     }
 
     quote(unquote(q)).ast mustEqual n.ast

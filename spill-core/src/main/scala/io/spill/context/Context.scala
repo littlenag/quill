@@ -6,10 +6,7 @@ import io.spill.dsl.CoreDsl
 import io.spill.util.Messages.fail
 import java.io.Closeable
 
-import scala.util.Try
-import io.spill.{ NamingStrategy, ReturnAction }
-
-trait Context[Idiom <: io.spill.idiom.Idiom, Naming <: NamingStrategy]
+trait Context
   extends Closeable
   with CoreDsl {
 
@@ -25,21 +22,17 @@ trait Context[Idiom <: io.spill.idiom.Idiom, Naming <: NamingStrategy]
   type Prepare = PrepareRow => (List[Any], PrepareRow)
   type Extractor[T] = ResultRow => T
 
-  case class BatchGroup(string: String, prepare: List[Prepare])
-  case class BatchGroupReturning(
-    string:            String,
-    returningBehavior: ReturnAction,
-    prepare:           List[Prepare]
-  )
+  type StreamResult[E, T]
 
-  def probe(statement: String): Try[_]
+  // stream or query?
+  def stream[E, T](quoted: Quoted[Stream[T]]): StreamResult[E, T] = macro QueryMacro.streamQuery[T]
 
-  def idiom: Idiom
-  def naming: Naming
+  // Macro methods do not support default arguments so need to have two methods
+  def stream[E, T](quoted: Quoted[Stream[T]], fetchSize: Int): StreamResult[E, T] = macro QueryMacro.streamQueryFetch[T]
 
   def run[T](quoted: Quoted[T]): Result[RunQuerySingleResult[T]] = macro QueryMacro.runQuerySingle[T]
-  def run[T](quoted: Quoted[Query[T]]): Result[RunQueryResult[T]] = macro QueryMacro.runQuery[T]
-  def prepare[T](quoted: Quoted[Query[T]]): Session => Result[PrepareRow] = macro QueryMacro.prepareQuery[T]
+  def run[T](quoted: Quoted[Stream[T]]): Result[RunQueryResult[T]] = macro QueryMacro.runQuery[T]
+  def prepare[T](quoted: Quoted[Stream[T]]): Session => Result[PrepareRow] = macro QueryMacro.prepareQuery[T]
 
   def run(quoted: Quoted[Action[_]]): Result[RunActionResult] = macro ActionMacro.runAction
   def run[T](

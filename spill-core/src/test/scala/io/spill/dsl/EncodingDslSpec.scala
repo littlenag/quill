@@ -23,19 +23,19 @@ case class Address(id: AddressId)
 case class AddressId(value: Long) extends AnyVal {
 
   def `inside quotation` = quote {
-    query[Address].filter(_.id == lift(this))
+    stream[Address].filter(_.id == lift(this))
   }
 
   def `inside run - query` = run {
-    query[Address].filter(_.id == lift(this))
+    stream[Address].filter(_.id == lift(this))
   }
 
   def `inside run - insert` = run {
-    query[Address].insert(_.id -> lift(this))
+    stream[Address].insert(_.id -> lift(this))
   }
 
   def `inside run - update` = run {
-    query[Address].update(_.id -> lift(this))
+    stream[Address].update(_.id -> lift(this))
   }
 }
 

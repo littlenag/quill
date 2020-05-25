@@ -19,7 +19,7 @@ class NormalizeReturningSpec extends Spec {
 
     val e = Entity(1, EmbEntity(2))
     val q = quote {
-      query[Entity].insert(lift(e))
+      stream[Entity].insert(lift(e))
     }
 
     "when returning parent col" in {
@@ -36,7 +36,7 @@ class NormalizeReturningSpec extends Spec {
       .withDialect(MirrorIdiomReturningSingle) { ctx =>
         import ctx._
         val r =
-          ctx.run(query[Entity].insert(lift(e)).returningGenerated(p => p.id))
+          ctx.run(stream[Entity].insert(lift(e)).returningGenerated(p => p.id))
         r.string mustEqual """querySchema("Entity").insert(v => v.emb.id -> ?).returningGenerated((p) => p.id)"""
         r.prepareRow mustEqual Row(2)
         r.returningBehavior mustEqual ReturnColumns(List("id"))
@@ -44,7 +44,7 @@ class NormalizeReturningSpec extends Spec {
     "when returning parent col - multi - returning (supported)" in testContext
       .withDialect(MirrorIdiomReturningMulti) { ctx =>
         import ctx._
-        val r = ctx.run(query[Entity].insert(lift(e)).returning(p => p.id))
+        val r = ctx.run(stream[Entity].insert(lift(e)).returning(p => p.id))
         r.string mustEqual """querySchema("Entity").insert(v => v.id -> ?, v => v.emb.id -> ?).returning((p) => p.id)"""
         r.prepareRow mustEqual Row(1, 2)
         r.returningBehavior mustEqual ReturnColumns(List("id"))
@@ -74,7 +74,7 @@ class NormalizeReturningSpec extends Spec {
     ) { ctx =>
       import ctx._
       val r =
-        ctx.run(query[Entity].insert(lift(e)).returningGenerated(p => p.emb.id))
+        ctx.run(stream[Entity].insert(lift(e)).returningGenerated(p => p.emb.id))
       r.string mustEqual """querySchema("Entity").insert(v => v.id -> ?).returningGenerated((p) => p.emb.id)"""
       r.prepareRow mustEqual Row(1)
       // As of #1489 the Idiom now decides how to tokenize a `returning` clause when for MirrorIdiom is `emb.id`

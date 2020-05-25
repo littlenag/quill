@@ -14,77 +14,77 @@ class AvoidAliasConflictComplexSpec extends Spec {
     case class Room(addressId: Int, stuff: String)
 
     "in tail clause" in {
-      def fun[T <: { def id: Int }] = quote { (tbl: Query[T]) =>
+      def fun[T <: { def id: Int }] = quote { (tbl: Stream[T]) =>
         for {
           t <- tbl
-          a <- query[Address].join(a => a.ownerFk == t.id)
+          a <- stream[Address].join(a => a.ownerFk == t.id)
         } yield (t, a)
       }
 
-      def funExpect[T <: { def id: Int }] = quote { (tbl: Query[T]) =>
+      def funExpect[T <: { def id: Int }] = quote { (tbl: Stream[T]) =>
         for {
           t <- tbl
-          a <- query[Address].join(a1 => a1.ownerFk == t.id)
+          a <- stream[Address].join(a1 => a1.ownerFk == t.id)
         } yield (t, a)
       }
 
       val q = quote {
-        fun[Person](query[Person].filter(a => a.name == "Joe"))
+        fun[Person](stream[Person].filter(a => a.name == "Joe"))
       }
       val expect = quote {
-        funExpect[Person](query[Person].filter(a => a.name == "Joe"))
+        funExpect[Person](stream[Person].filter(a => a.name == "Joe"))
       }
       Normalize(q.ast) mustEqual Normalize(expect.ast)
     }
 
     "in middle clause" in {
-      def fun[T <: { def id: Int }] = quote { (tbl: Query[T]) =>
+      def fun[T <: { def id: Int }] = quote { (tbl: Stream[T]) =>
         for {
           t <- tbl
-          a <- query[Address].join(a => a.ownerFk == t.id)
-          r <- query[Room].join(r => r.addressId == a.id)
+          a <- stream[Address].join(a => a.ownerFk == t.id)
+          r <- stream[Room].join(r => r.addressId == a.id)
         } yield (t, a, r)
       }
 
-      def funExpect[T <: { def id: Int }] = quote { (tbl: Query[T]) =>
+      def funExpect[T <: { def id: Int }] = quote { (tbl: Stream[T]) =>
         for {
           t <- tbl
-          a <- query[Address].join(a1 => a1.ownerFk == t.id)
-          r <- query[Room].join(r => r.addressId == a.id)
+          a <- stream[Address].join(a1 => a1.ownerFk == t.id)
+          r <- stream[Room].join(r => r.addressId == a.id)
         } yield (t, a, r)
       }
 
       val q = quote {
-        fun[Person](query[Person].filter(a => a.name == "Joe"))
+        fun[Person](stream[Person].filter(a => a.name == "Joe"))
       }
       val expect = quote {
-        funExpect[Person](query[Person].filter(a => a.name == "Joe"))
+        funExpect[Person](stream[Person].filter(a => a.name == "Joe"))
       }
       Normalize(q.ast) mustEqual Normalize(expect.ast)
     }
 
     "in middle and end clause" in {
-      def fun[T <: { def id: Int }] = quote { (tbl: Query[T]) =>
+      def fun[T <: { def id: Int }] = quote { (tbl: Stream[T]) =>
         for {
           t <- tbl
-          a <- query[Address].join(a => a.ownerFk == t.id)
-          r <- query[Room].join(a => a.addressId == 1)
+          a <- stream[Address].join(a => a.ownerFk == t.id)
+          r <- stream[Room].join(a => a.addressId == 1)
         } yield (t, a, r)
       }
 
-      def funExpect[T <: { def id: Int }] = quote { (tbl: Query[T]) =>
+      def funExpect[T <: { def id: Int }] = quote { (tbl: Stream[T]) =>
         for {
           t <- tbl
-          a <- query[Address].join(a1 => a1.ownerFk == t.id)
-          r <- query[Room].join(a2 => a2.addressId == 1)
+          a <- stream[Address].join(a1 => a1.ownerFk == t.id)
+          r <- stream[Room].join(a2 => a2.addressId == 1)
         } yield (t, a, r)
       }
 
       val q = quote {
-        fun[Person](query[Person].filter(a => a.name == "Joe"))
+        fun[Person](stream[Person].filter(a => a.name == "Joe"))
       }
       val expect = quote {
-        funExpect[Person](query[Person].filter(a => a.name == "Joe"))
+        funExpect[Person](stream[Person].filter(a => a.name == "Joe"))
       }
       Normalize(q.ast) mustEqual Normalize(expect.ast)
     }

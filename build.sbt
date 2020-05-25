@@ -14,6 +14,8 @@ val CodegenTag = Tags.Tag("CodegenTag")
 lazy val baseModules = Seq[sbt.ClasspathDep[sbt.ProjectReference]](
   `spill-core-portable-jvm`, `spill-core-portable-js`,
   `spill-core-jvm`, `spill-core-js`,
+  `spill-zstream`,
+
   `quill-core-portable-jvm`, `quill-core-portable-js`,
   `quill-core-jvm`, `quill-core-js`,
   `quill-sql-portable-jvm`, `quill-sql-portable-js`,
@@ -176,6 +178,23 @@ lazy val `spill-core` =
 
 lazy val `spill-core-jvm` = `spill-core`.jvm
 lazy val `spill-core-js` = `spill-core`.js
+
+val zioVersion = "1.0.0-RC19-2+20-e3d5c945-SNAPSHOT"
+
+lazy val `spill-zstream` =
+  (project in file("spill-zstream"))
+    .settings(commonSettings: _*)
+    .settings(mimaSettings: _*)
+    .settings(
+      scalaVersion := "2.12.10",
+      crossScalaVersions := Seq(/*"2.11.12",*/ "2.12.10", "2.13.1"),
+      fork in Test := true,
+      libraryDependencies ++= Seq(
+        "dev.zio"                 %% "zio"                 % zioVersion,
+        "dev.zio"                 %% "zio-streams"         % zioVersion,
+      )
+    )
+    .dependsOn(`spill-core-jvm` % "compile->compile;test->test")
 
 ///////
 
@@ -712,7 +731,8 @@ lazy val basicSettings = Seq(
     }
   },
   organization := "io.getquill",
-  scalaVersion := "2.11.12",
+  //scalaVersion := "2.11.12",
+  scalaVersion := "2.12.10",
   crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
   libraryDependencies ++= Seq(
     "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.6",

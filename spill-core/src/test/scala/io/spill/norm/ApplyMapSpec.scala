@@ -5,7 +5,7 @@ import io.spill.testContext.TestEntity
 import io.spill.testContext.implicitOrd
 import io.spill.testContext.qr1
 import io.spill.testContext.qr2
-import io.spill.testContext.query
+import io.spill.testContext.stream
 import io.spill.testContext.quote
 import io.spill.testContext.unquote
 
@@ -146,19 +146,19 @@ class ApplyMapSpec extends Spec {
     }
     "distinct" in {
       val q = quote {
-        query[TestEntity].map(i => (i.i, i.l)).distinct.map(x => (x._1, x._2))
+        stream[TestEntity].map(i => (i.i, i.l)).distinct.map(x => (x._1, x._2))
       }
       val n = quote {
-        query[TestEntity].map(i => (i.i, i.l)).distinct
+        stream[TestEntity].map(i => (i.i, i.l)).distinct
       }
       ApplyMap.unapply(q.ast) mustEqual Some(n.ast)
     }
     "distinct + sort" in {
       val q = quote {
-        query[TestEntity].map(i => (i.i, i.l)).distinct.sortBy(_._1)
+        stream[TestEntity].map(i => (i.i, i.l)).distinct.sortBy(_._1)
       }
       val n = quote {
-        query[TestEntity].sortBy(i => i.i).map(i => (i.i, i.l)).distinct
+        stream[TestEntity].sortBy(i => i.i).map(i => (i.i, i.l)).distinct
       }
       ApplyMap.unapply(q.ast) mustEqual Some(n.ast)
     }

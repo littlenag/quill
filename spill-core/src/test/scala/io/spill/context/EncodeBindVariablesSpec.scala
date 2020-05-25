@@ -47,7 +47,7 @@ class EncodeBindVariablesSpec extends Spec {
     case class NotValueClass(value: Int)
     case class Entity(x: NotValueClass)
     val q = quote { (x: NotValueClass) =>
-      query[Entity].filter(_.x == x)
+      stream[Entity].filter(_.x == x)
     }
     "testContext.run(q)(NotValueClass(1))" mustNot compile
   }

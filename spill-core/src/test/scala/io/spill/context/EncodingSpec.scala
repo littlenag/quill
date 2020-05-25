@@ -38,7 +38,7 @@ trait EncodingSpec extends Spec {
   )
 
   val delete = quote {
-    query[EncodingTestEntity].delete
+    stream[EncodingTestEntity].delete
   }
 
   val insert = quote {
@@ -64,7 +64,7 @@ trait EncodingSpec extends Spec {
     o9: Option[Double],
     o10: Option[Array[Byte]],
     o11: Option[Date]) =>
-      query[EncodingTestEntity].insert(
+      stream[EncodingTestEntity].insert(
         _.v1 -> v1,
         _.v2 -> v2,
         _.v3 -> v3,

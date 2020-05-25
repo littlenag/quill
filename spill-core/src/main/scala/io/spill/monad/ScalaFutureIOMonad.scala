@@ -16,7 +16,7 @@ trait ScalaFutureIOMonad extends IOMonad {
   type Result[T] = Future[T]
 
   def runIO[T](quoted: Quoted[T]): IO[RunQuerySingleResult[T], Effect.Read] = macro IOMonadMacro.runIOEC
-  def runIO[T](quoted: Quoted[Query[T]]): IO[RunQueryResult[T], Effect.Read] = macro IOMonadMacro.runIOEC
+  def runIO[T](quoted: Quoted[Stream[T]]): IO[RunQueryResult[T], Effect.Read] = macro IOMonadMacro.runIOEC
   def runIO(quoted: Quoted[Action[_]]): IO[RunActionResult, Effect.Write] = macro IOMonadMacro.runIOEC
   def runIO[T](
     quoted: Quoted[ActionReturning[_, T]]

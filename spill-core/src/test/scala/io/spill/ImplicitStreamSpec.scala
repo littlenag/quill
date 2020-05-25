@@ -15,7 +15,7 @@ class Test(val a: String) extends Product {
   def productElement(n: Int) = ???
 }
 
-class ImplicitQuerySpec extends Spec {
+class ImplicitStreamSpec extends Spec {
 
   import iqContext._
 
